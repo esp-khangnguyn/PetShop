@@ -42,8 +42,8 @@ public class ManagerForm extends javax.swing.JFrame {
                 serviceLayout.setVisible(false);
             }
             case 3 -> {
-                invoiceTypeBtn.setBorder(BorderFactory.createLineBorder(Color.white));
-                serviceTypeLayout.setVisible(false);
+                PetBtn.setBorder(BorderFactory.createLineBorder(Color.white));
+                petLayout.setVisible(false);
             }
             case 4 -> {
                 productBtn.setBorder(BorderFactory.createLineBorder(Color.white));
@@ -149,7 +149,7 @@ public class ManagerForm extends javax.swing.JFrame {
         jPanel2 = new javax.swing.JPanel();
         invoiceBtn = new javax.swing.JLabel();
         serviceBtn = new javax.swing.JLabel();
-        invoiceTypeBtn = new javax.swing.JLabel();
+        PetBtn = new javax.swing.JLabel();
         productBtn = new javax.swing.JLabel();
         customerBtn = new javax.swing.JLabel();
         statisticBtn = new javax.swing.JLabel();
@@ -170,7 +170,6 @@ public class ManagerForm extends javax.swing.JFrame {
         jLabel3 = new javax.swing.JLabel();
         jTextField2 = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
-        serviceCombobox = new javax.swing.JComboBox<>();
         jLabel10 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         productList = new javax.swing.JList<>();
@@ -198,21 +197,15 @@ public class ManagerForm extends javax.swing.JFrame {
         jButton22 = new javax.swing.JButton();
         jButton23 = new javax.swing.JButton();
         jButton24 = new javax.swing.JButton();
-        serviceTypeLayout = new javax.swing.JPanel();
-        jPanel9 = new javax.swing.JPanel();
-        jLabel13 = new javax.swing.JLabel();
-        serviceTypeCode = new javax.swing.JTextField();
-        jLabel14 = new javax.swing.JLabel();
-        serviceTypeName = new javax.swing.JTextField();
-        jLabel15 = new javax.swing.JLabel();
-        jScrollPane6 = new javax.swing.JScrollPane();
-        serviceTypeNote = new javax.swing.JTextArea();
-        addSTbtn = new javax.swing.JButton();
-        deleteSTbtn = new javax.swing.JButton();
-        updateSTbtn = new javax.swing.JButton();
+        petLayout = new javax.swing.JPanel();
         jPanel12 = new javax.swing.JPanel();
+        jPanel27 = new javax.swing.JPanel();
         jScrollPane7 = new javax.swing.JScrollPane();
         serviceTypeTable = new javax.swing.JTable();
+        jPanel28 = new javax.swing.JPanel();
+        jButton25 = new javax.swing.JButton();
+        jButton26 = new javax.swing.JButton();
+        jButton27 = new javax.swing.JButton();
         productLayout = new javax.swing.JPanel();
         jScrollPane8 = new javax.swing.JScrollPane();
         productListTable = new javax.swing.JTable();
@@ -303,16 +296,16 @@ public class ManagerForm extends javax.swing.JFrame {
         });
         jPanel2.add(serviceBtn);
 
-        invoiceTypeBtn.setBackground(new java.awt.Color(255, 255, 255));
-        invoiceTypeBtn.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        invoiceTypeBtn.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        invoiceTypeBtn.setText("Loại hình dịch vụ");
-        invoiceTypeBtn.addMouseListener(new java.awt.event.MouseAdapter() {
+        PetBtn.setBackground(new java.awt.Color(255, 255, 255));
+        PetBtn.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        PetBtn.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        PetBtn.setText("Thú cưng");
+        PetBtn.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                invoiceTypeBtnMouseClicked(evt);
+                PetBtnMouseClicked(evt);
             }
         });
-        jPanel2.add(invoiceTypeBtn);
+        jPanel2.add(PetBtn);
 
         productBtn.setBackground(new java.awt.Color(255, 255, 255));
         productBtn.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
@@ -377,9 +370,9 @@ public class ManagerForm extends javax.swing.JFrame {
 
         invoiceLayout.setBackground(new java.awt.Color(255, 255, 255));
 
-        jPanel5.setBackground(new java.awt.Color(51, 255, 255));
+        jPanel5.setBackground(new java.awt.Color(127, 219, 255));
 
-        jPanel6.setBackground(new java.awt.Color(255, 204, 204));
+        jPanel6.setBackground(new java.awt.Color(51, 255, 255));
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -403,14 +396,17 @@ public class ManagerForm extends javax.swing.JFrame {
 
         jPanel7.setBackground(new java.awt.Color(255, 255, 255));
 
+        jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel2.setText("Nhân viên");
 
         jLabel5.setText("Nguyễn Lê Khang");
 
+        jLabel6.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel6.setText("Ngày tạo hóa đơn");
 
         jLabel7.setText("22-5-2023");
 
+        jLabel9.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel9.setText("SĐT khách hàng");
 
         jTextField1.setText("0865904101");
@@ -420,6 +416,7 @@ public class ManagerForm extends javax.swing.JFrame {
             }
         });
 
+        jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel3.setText("Tên khách hàng");
 
         jTextField2.setText("Ming Cu");
@@ -429,15 +426,10 @@ public class ManagerForm extends javax.swing.JFrame {
             }
         });
 
-        jLabel4.setText("Loại hình dịch vụ");
+        jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel4.setText("Thú cưng");
 
-        serviceCombobox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "dich vu 1", "dich vu 2" }));
-        serviceCombobox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                serviceComboboxActionPerformed(evt);
-            }
-        });
-
+        jLabel10.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel10.setText("Sản phẩm");
 
         productList.setModel(new javax.swing.AbstractListModel<String>() {
@@ -452,6 +444,7 @@ public class ManagerForm extends javax.swing.JFrame {
         });
         jScrollPane1.setViewportView(productList);
 
+        jLabel11.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel11.setText("Ghi chú");
 
         jTextArea1.setColumns(20);
@@ -483,7 +476,6 @@ public class ManagerForm extends javax.swing.JFrame {
                             .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 465, Short.MAX_VALUE)
                             .addGroup(jPanel7Layout.createSequentialGroup()
                                 .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(serviceCombobox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                     .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 226, Short.MAX_VALUE)
                                     .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                     .addComponent(jTextField1)
@@ -524,17 +516,15 @@ public class ManagerForm extends javax.swing.JFrame {
                     .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel10))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel7Layout.createSequentialGroup()
-                        .addComponent(serviceCombobox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jScrollPane4)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel11))
+                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(jPanel7Layout.createSequentialGroup()
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 195, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(82, 82, 82)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGap(88, 88, 88))
+                    .addGroup(jPanel7Layout.createSequentialGroup()
+                        .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 228, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jLabel11)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(189, 189, 189))
         );
@@ -785,133 +775,100 @@ public class ManagerForm extends javax.swing.JFrame {
 
         jPanel4.add(serviceLayout, "card3");
 
-        serviceTypeLayout.setLayout(new java.awt.GridLayout(1, 2));
+        petLayout.setLayout(new java.awt.GridLayout(1, 2));
 
-        jPanel9.setBackground(new java.awt.Color(255, 255, 255));
-
-        jLabel13.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jLabel13.setText("Mã loại hình");
-
-        jLabel14.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jLabel14.setText("Tên loại hình");
-
-        jLabel15.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jLabel15.setText("Ghi chú");
-
-        serviceTypeNote.setColumns(20);
-        serviceTypeNote.setRows(5);
-        jScrollPane6.setViewportView(serviceTypeNote);
-
-        addSTbtn.setBackground(new java.awt.Color(153, 255, 153));
-        addSTbtn.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
-        addSTbtn.setForeground(new java.awt.Color(102, 0, 51));
-        addSTbtn.setText("Thêm");
-        addSTbtn.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                addSTbtnActionPerformed(evt);
-            }
-        });
-
-        deleteSTbtn.setBackground(new java.awt.Color(153, 255, 153));
-        deleteSTbtn.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
-        deleteSTbtn.setForeground(new java.awt.Color(102, 0, 51));
-        deleteSTbtn.setText("Xóa");
-        deleteSTbtn.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                deleteSTbtnActionPerformed(evt);
-            }
-        });
-
-        updateSTbtn.setBackground(new java.awt.Color(153, 255, 153));
-        updateSTbtn.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
-        updateSTbtn.setForeground(new java.awt.Color(102, 0, 51));
-        updateSTbtn.setText("Sửa");
-        updateSTbtn.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                updateSTbtnActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout jPanel9Layout = new javax.swing.GroupLayout(jPanel9);
-        jPanel9.setLayout(jPanel9Layout);
-        jPanel9Layout.setHorizontalGroup(
-            jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel9Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel9Layout.createSequentialGroup()
-                        .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel14, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel13, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGap(33, 33, 33)
-                        .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(serviceTypeCode)
-                            .addComponent(serviceTypeName)
-                            .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 267, Short.MAX_VALUE))
-                        .addContainerGap(63, Short.MAX_VALUE))
-                    .addGroup(jPanel9Layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(addSTbtn, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(38, 38, 38)
-                        .addComponent(deleteSTbtn, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(32, 32, 32)
-                        .addComponent(updateSTbtn, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(34, 34, 34))))
-        );
-        jPanel9Layout.setVerticalGroup(
-            jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel9Layout.createSequentialGroup()
-                .addGap(37, 37, 37)
-                .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel13, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(jPanel9Layout.createSequentialGroup()
-                        .addGap(4, 4, 4)
-                        .addComponent(serviceTypeCode, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel14)
-                    .addComponent(serviceTypeName, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(30, 30, 30)
-                .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel15))
-                .addGap(37, 37, 37)
-                .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(updateSTbtn, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(deleteSTbtn, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(addSTbtn, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(232, Short.MAX_VALUE))
-        );
-
-        serviceTypeLayout.add(jPanel9);
+        jPanel12.setLayout(new java.awt.BorderLayout());
 
         serviceTypeTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             new String [] {
-                "Mã loại hình", "Tên loại hình", "Ghi chú"
+                "Mã ", "Loại", "Tên ", "Ghi chú", "Tuổi", "Giá"
             }
-        ));
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Integer.class, java.lang.Long.class
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+        });
         jScrollPane7.setViewportView(serviceTypeTable);
 
-        javax.swing.GroupLayout jPanel12Layout = new javax.swing.GroupLayout(jPanel12);
-        jPanel12.setLayout(jPanel12Layout);
-        jPanel12Layout.setHorizontalGroup(
-            jPanel12Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel12Layout.createSequentialGroup()
-                .addComponent(jScrollPane7, javax.swing.GroupLayout.PREFERRED_SIZE, 458, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+        javax.swing.GroupLayout jPanel27Layout = new javax.swing.GroupLayout(jPanel27);
+        jPanel27.setLayout(jPanel27Layout);
+        jPanel27Layout.setHorizontalGroup(
+            jPanel27Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jScrollPane7, javax.swing.GroupLayout.DEFAULT_SIZE, 931, Short.MAX_VALUE)
         );
-        jPanel12Layout.setVerticalGroup(
-            jPanel12Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane7, javax.swing.GroupLayout.DEFAULT_SIZE, 696, Short.MAX_VALUE)
+        jPanel27Layout.setVerticalGroup(
+            jPanel27Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jScrollPane7, javax.swing.GroupLayout.DEFAULT_SIZE, 608, Short.MAX_VALUE)
         );
 
-        serviceTypeLayout.add(jPanel12);
+        jPanel12.add(jPanel27, java.awt.BorderLayout.PAGE_START);
 
-        jPanel4.add(serviceTypeLayout, "card4");
+        jButton25.setBackground(new java.awt.Color(153, 255, 153));
+        jButton25.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
+        jButton25.setForeground(new java.awt.Color(102, 0, 51));
+        jButton25.setText("Xóa");
+        jButton25.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton25ActionPerformed(evt);
+            }
+        });
+
+        jButton26.setBackground(new java.awt.Color(153, 255, 153));
+        jButton26.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
+        jButton26.setForeground(new java.awt.Color(102, 0, 51));
+        jButton26.setText("Thêm");
+        jButton26.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton26ActionPerformed(evt);
+            }
+        });
+
+        jButton27.setBackground(new java.awt.Color(153, 255, 153));
+        jButton27.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
+        jButton27.setForeground(new java.awt.Color(102, 0, 51));
+        jButton27.setText("Sửa");
+        jButton27.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton27ActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel28Layout = new javax.swing.GroupLayout(jPanel28);
+        jPanel28.setLayout(jPanel28Layout);
+        jPanel28Layout.setHorizontalGroup(
+            jPanel28Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel28Layout.createSequentialGroup()
+                .addContainerGap(487, Short.MAX_VALUE)
+                .addComponent(jButton26, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(34, 34, 34)
+                .addComponent(jButton27, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(34, 34, 34)
+                .addComponent(jButton25, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(25, 25, 25))
+        );
+        jPanel28Layout.setVerticalGroup(
+            jPanel28Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel28Layout.createSequentialGroup()
+                .addGap(16, 16, 16)
+                .addGroup(jPanel28Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton25, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton27, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton26, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(25, Short.MAX_VALUE))
+        );
+
+        jPanel12.add(jPanel28, java.awt.BorderLayout.PAGE_END);
+
+        petLayout.add(jPanel12);
+
+        jPanel4.add(petLayout, "card4");
 
         productLayout.setBackground(new java.awt.Color(153, 255, 153));
         productLayout.setForeground(new java.awt.Color(102, 0, 51));
@@ -1407,14 +1364,14 @@ public class ManagerForm extends javax.swing.JFrame {
 //        layout1.setVisible(false);
     }//GEN-LAST:event_serviceBtnMouseClicked
 
-    private void invoiceTypeBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_invoiceTypeBtnMouseClicked
+    private void PetBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_PetBtnMouseClicked
         // TODO add your handling code here:
         removeClicked(state);
         state = 3;
-        invoiceTypeBtn.setBackground(new Color(0x0074D9));
-        invoiceTypeBtn.setBorder(BorderFactory.createLineBorder(Color.black));
-        serviceTypeLayout.setVisible(true);
-    }//GEN-LAST:event_invoiceTypeBtnMouseClicked
+        PetBtn.setBackground(new Color(0x0074D9));
+        PetBtn.setBorder(BorderFactory.createLineBorder(Color.black));
+        petLayout.setVisible(true);
+    }//GEN-LAST:event_PetBtnMouseClicked
 
     private void productBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_productBtnMouseClicked
         // TODO add your handling code here:
@@ -1459,25 +1416,6 @@ public class ManagerForm extends javax.swing.JFrame {
     private void jTextField2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField2ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jTextField2ActionPerformed
-
-    private void serviceComboboxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_serviceComboboxActionPerformed
-        // TODO add your handling code here:
-        String serviceSelected = String.valueOf(serviceCombobox.getSelectedItem());
-        DefaultListModel model = new DefaultListModel();
-        if (serviceSelected.equals("dich vu 1")) {
-            String[] items = { "A", "B", "C", "D" };
-            for (int i = 0; i < items.length; i++) {
-                model.add(i, items[i]);
-            }
-        }
-        if (serviceSelected.equals("dich vu 2")) {
-            String[] items = { "E", "F", "G", "H" };
-            for (int i = 0; i < items.length; i++) {
-                model.add(i, items[i]);
-            }
-        }
-        serviceList.setModel(model);
-    }//GEN-LAST:event_serviceComboboxActionPerformed
 
     private void jTextField3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField3ActionPerformed
         // TODO add your handling code here:
@@ -1558,51 +1496,6 @@ public class ManagerForm extends javax.swing.JFrame {
         DefaultTableModel model = (DefaultTableModel) serviceTable.getModel();
         if (index != -1) model.removeRow(index);
     }//GEN-LAST:event_jButton22ActionPerformed
-
-    private void addSTbtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addSTbtnActionPerformed
-        // TODO add your handling code here:\
-        DefaultTableModel model = (DefaultTableModel) serviceTypeTable.getModel();
-        model.addRow(new Object[]{
-            serviceTypeCode.getText(),
-            serviceTypeName.getText(),
-            serviceTypeNote.getText()
-        });
-    }//GEN-LAST:event_addSTbtnActionPerformed
-
-    private void deleteSTbtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteSTbtnActionPerformed
-        // TODO add your handling code here:
-        int index = serviceTypeTable.getSelectedRow();
-        if (index != -1) {
-            DefaultTableModel model = (DefaultTableModel) serviceTypeTable.getModel();
-            model.removeRow(index);   
-        }
-    }//GEN-LAST:event_deleteSTbtnActionPerformed
-
-    private void updateSTbtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateSTbtnActionPerformed
-        // TODO add your handling code here:
-        int index = serviceTypeTable.getSelectedRow();
-        if (index != -1) {
-            DefaultTableModel model = (DefaultTableModel) serviceTypeTable.getModel();
-            if (updateSTbtn.getText().equals("Sửa")) {         
-                String stCode = model.getValueAt(index, 0).toString();
-                String stName = model.getValueAt(index, 1).toString();
-                String stNote = model.getValueAt(index, 2).toString();
-                serviceTypeCode.setText(stCode);
-                serviceTypeName.setText(stName);
-                serviceTypeNote.setText(stNote);
-                updateSTbtn.setText("Xác nhận");
-                addSTbtn.setEnabled(false);
-                deleteSTbtn.setEnabled(false); 
-            } else {
-                addSTbtn.setEnabled(true);
-                deleteSTbtn.setEnabled(true); 
-                updateSTbtn.setText("Sửa");
-                model.setValueAt(serviceTypeCode.getText(), index, 0);
-                model.setValueAt(serviceTypeName.getText(), index, 1);
-                model.setValueAt(serviceTypeNote.getText(), index, 2);
-            }
-        }
-    }//GEN-LAST:event_updateSTbtnActionPerformed
 
     private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed
         // TODO add your handling code here:
@@ -1724,6 +1617,18 @@ public class ManagerForm extends javax.swing.JFrame {
         data.pack();
     }//GEN-LAST:event_jButton7ActionPerformed
 
+    private void jButton25ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton25ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton25ActionPerformed
+
+    private void jButton26ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton26ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton26ActionPerformed
+
+    private void jButton27ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton27ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton27ActionPerformed
+
     public static void replaceRowToServiceTable(Object[] data,int row) {
         DefaultTableModel modelservice = (DefaultTableModel) serviceTable.getModel(); 
         for (int i= 0;i < 4; i++) {
@@ -1810,17 +1715,15 @@ public class ManagerForm extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton addSTbtn;
+    private javax.swing.JLabel PetBtn;
     private javax.swing.JLabel customerBtn;
     private javax.swing.JPanel customerLayout;
     private static javax.swing.JTable customerTable;
-    private javax.swing.JButton deleteSTbtn;
     private javax.swing.JLabel empBtn;
     private javax.swing.JPanel empLayout;
     private static javax.swing.JTable empTable;
     private javax.swing.JLabel invoiceBtn;
     private javax.swing.JPanel invoiceLayout;
-    private javax.swing.JLabel invoiceTypeBtn;
     private javax.swing.JButton jButton10;
     private javax.swing.JButton jButton11;
     private javax.swing.JButton jButton12;
@@ -1833,6 +1736,9 @@ public class ManagerForm extends javax.swing.JFrame {
     private javax.swing.JButton jButton22;
     private javax.swing.JButton jButton23;
     private javax.swing.JButton jButton24;
+    private javax.swing.JButton jButton25;
+    private javax.swing.JButton jButton26;
+    private javax.swing.JButton jButton27;
     private javax.swing.JButton jButton7;
     private javax.swing.JButton jButton8;
     private javax.swing.JButton jButton9;
@@ -1841,9 +1747,6 @@ public class ManagerForm extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
-    private javax.swing.JLabel jLabel13;
-    private javax.swing.JLabel jLabel14;
-    private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel16;
     private javax.swing.JLabel jLabel17;
     private javax.swing.JLabel jLabel18;
@@ -1876,13 +1779,14 @@ public class ManagerForm extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel24;
     private javax.swing.JPanel jPanel25;
     private javax.swing.JPanel jPanel26;
+    private javax.swing.JPanel jPanel27;
+    private javax.swing.JPanel jPanel28;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel jPanel8;
-    private javax.swing.JPanel jPanel9;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane10;
     private javax.swing.JScrollPane jScrollPane11;
@@ -1893,7 +1797,6 @@ public class ManagerForm extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JScrollPane jScrollPane5;
-    private javax.swing.JScrollPane jScrollPane6;
     private javax.swing.JScrollPane jScrollPane7;
     private javax.swing.JScrollPane jScrollPane8;
     private javax.swing.JScrollPane jScrollPane9;
@@ -1907,23 +1810,18 @@ public class ManagerForm extends javax.swing.JFrame {
     private javax.swing.JTextField jTextField2;
     private javax.swing.JTextField jTextField3;
     private javax.swing.JTextField jTextField6;
+    private javax.swing.JPanel petLayout;
     private javax.swing.JLabel productBtn;
     private javax.swing.JPanel productLayout;
     private javax.swing.JList<String> productList;
     private static javax.swing.JTable productListTable;
     private javax.swing.JTable productTable;
     private javax.swing.JLabel serviceBtn;
-    private javax.swing.JComboBox<String> serviceCombobox;
     private javax.swing.JPanel serviceLayout;
     private javax.swing.JList<String> serviceList;
     private static javax.swing.JTable serviceTable;
-    private javax.swing.JTextField serviceTypeCode;
-    private javax.swing.JPanel serviceTypeLayout;
-    private javax.swing.JTextField serviceTypeName;
-    private javax.swing.JTextArea serviceTypeNote;
     private javax.swing.JTable serviceTypeTable;
     private javax.swing.JLabel statisticBtn;
     private javax.swing.JPanel statisticLayout;
-    private javax.swing.JButton updateSTbtn;
     // End of variables declaration//GEN-END:variables
 }
