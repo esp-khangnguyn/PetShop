@@ -11,17 +11,15 @@ package ClassModel;
 public class Service {
     private String serviceCode;
     private String serviceName;
-    private String serviceType;
     private String serviceNotes;
     private int servicePrice;
 
     public Service() {
     }
 
-    public Service(String serviceCode, String serviceName, String serviceType, String serviceNotes, int servicePrice) {
+    public Service(String serviceCode, String serviceName,  String serviceNotes, int servicePrice) {
         this.serviceCode = serviceCode;
         this.serviceName = serviceName;
-        this.serviceType = serviceType;
         this.serviceNotes = serviceNotes;
         this.servicePrice = servicePrice;
     }
@@ -42,14 +40,6 @@ public class Service {
         this.serviceName = serviceName;
     }
 
-    public String getServiceType() {
-        return serviceType;
-    }
-
-    public void setServiceType(String serviceType) {
-        this.serviceType = serviceType;
-    }
-
     public String getServiceNotes() {
         return serviceNotes;
     }
@@ -68,7 +58,8 @@ public class Service {
 
     @Override
     public String toString() {
-        return "Service{" + "serviceCode=" + serviceCode + ", serviceName=" + serviceName + ", serviceType=" + serviceType + ", serviceNotes=" + serviceNotes + ", servicePrice=" + servicePrice + '}';
+        return "Service{" + "serviceCode=" + serviceCode + ", serviceName=" + serviceName + ", serviceNotes=" + serviceNotes + ", servicePrice=" + servicePrice + '}';
     }
+    
     
 }

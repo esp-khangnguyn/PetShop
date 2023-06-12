@@ -231,13 +231,18 @@ public class InputProductForm extends javax.swing.JFrame {
     }//GEN-LAST:event_inPriceFieldActionPerformed
 
     private void inputProductSubmitBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_inputProductSubmitBtnActionPerformed
-
-        boolean valid = true;
+         boolean valid = true;
         StringBuilder sb = new StringBuilder();
         code = codeField.getText();
         name = nameField.getText();
         String stringPrice = outPriceField.getText();
         note = noteField.getText();
+        if (note.equals("")){
+            note = "NONE";
+        }
+        else {
+            note = noteField.getText();
+        }
         String stringImportPrice = inPriceField.getText();
         quantity = (int) quantityField.getValue();
         date = dateField.getText();
@@ -261,7 +266,7 @@ public class InputProductForm extends javax.swing.JFrame {
         }
         if (quantity <= 0){
             valid = false;
-            JOptionPane.showMessageDialog(this, "So luong must larger than 0!", "Error!", JOptionPane.ERROR_MESSAGE);
+            sb.append("So luong must larger than 0!\n");
         }
         if (date.equals("")){
             valid = false;
@@ -273,20 +278,30 @@ public class InputProductForm extends javax.swing.JFrame {
         });
         }
 //        Ep kieu
-        inPrice = Integer.parseInt(stringPrice);
-        outPrice = Integer.parseInt(stringImportPrice);
+        inPrice = Integer.parseInt(stringImportPrice);
+        outPrice = Integer.parseInt(stringPrice);
         if (valid == true){
-            Product product = new Product(code, name, inPrice, note, outPrice, quantity, date);
+            Product product = new Product(code, name, outPrice, note, inPrice, quantity, date);
             boolean productCheck = ProductDAO.getInstance().isExistedID(code);
             System.out.println(productCheck);
             if (productCheck == true){
-                JOptionPane.showMessageDialog(this, "Ma san pham da duoc su dung!", "Error!", JOptionPane.ERROR_MESSAGE);
+                if (isUpdate){
+                    int updatePro = ProductDAO.getInstance().update(product);
+                    ManagerForm.updateProductListTable();
+
+                }
+                else {
+                    JOptionPane.showMessageDialog(this, "Ma san pham da duoc su dung!", "Error!", JOptionPane.ERROR_MESSAGE);
+
+                }
             }
             else {
                 int createProduct = ProductDAO.getInstance().insert(product);
                 JOptionPane.showMessageDialog(this, "Register successfully!");
                 if (isUpdate) {
-                    ManagerForm.replaceRowToProductListTable(getRow(),this.row);
+//                    ManagerForm.replaceRowToProductListTable(getRow(),this.row);
+                       ManagerForm.updateProductListTable();
+//                       ManagerForm.resetTable();
                 }
                 else {
                     ManagerForm.addRowToProductListTable(getRow());
@@ -297,6 +312,7 @@ public class InputProductForm extends javax.swing.JFrame {
             valid = true;
         }
         dispose();
+     
     }//GEN-LAST:event_inputProductSubmitBtnActionPerformed
 
 

@@ -77,8 +77,8 @@ public class ProductDAO implements DAOInterface<Product>{
             
             String sql = "UPDATE PRODUCT " 
                     + "SET PRODUCT_NAME = ?, " 
-                    + "PRICE = ?, " + "NOTE= ?, " + 
-                    "IMPORT_PRICE = ?, " + "QUANTITY = ?, "+ "DATE_ADDED=?" + "WHERE PRODUCT_CODE = ?";
+                    + "PRICE = ?, " + "NOTES= ?, " + 
+                    "IMPORT_PRICE = ?, " + "QUANTITY = ?, "+ "DATE_ADDED=?" + " WHERE PRODUCT_CODE = ?";
                     
             PreparedStatement pst = c.prepareStatement(sql);
             System.out.println("You have done: " + sql);
@@ -144,8 +144,8 @@ public class ProductDAO implements DAOInterface<Product>{
                 String notes = rs.getString("NOTES");
                 int importPrice = rs.getInt("IMPORT_PRICE");
                 int quantity =  rs.getInt("QUANTITY");
-                String dateAdded = rs.getString("DATE_ADDDED");
-                Product product = new Product(code, name, importPrice, notes, importPrice, quantity, dateAdded);
+                String dateAdded = rs.getString("DATE_ADDED");
+                Product product = new Product(code, name, price, notes, importPrice, quantity, dateAdded);
                 productList.add(product);
             }
             System.out.println("You have done: " + sql);

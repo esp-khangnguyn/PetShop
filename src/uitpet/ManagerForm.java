@@ -7,10 +7,13 @@ package uitpet;
 import ClassModel.Customer;
 import ClassModel.Employee;
 import ClassModel.Product;
+import ClassModel.Service;
 import DAOmodel.CustomerDAO;
 import DAOmodel.EmployeeDAO;
 import DAOmodel.ProductDAO;
+import DAOmodel.ServiceDAO;
 import java.awt.Color;
+import java.util.ArrayList;
 import java.util.HashSet;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
@@ -130,9 +133,34 @@ public class ManagerForm extends javax.swing.JFrame {
         b.setEnabled(false);
     }
     
+    public static void updateProductListTable(){
+        DefaultTableModel model = (DefaultTableModel) productListTable.getModel();
+        model.setRowCount(0);
+        ArrayList<Product> list = ProductDAO.getInstance().SelectAll();
+        for (Product p : list){
+            System.out.println(p);
+            model.addRow(new Object[]{p.getProductCode(),p.getProductName(),p.getQuantity(),p.getImportPrice(),p.getProductPrice(),p.getProductNotes(),p.getDateAdded()});
+        }
+        productListTable.setModel(model);
+    }
+    
+     public static void updateServiceTable(){
+        DefaultTableModel model = (DefaultTableModel) serviceTable.getModel();
+        model.setRowCount(0);
+        ArrayList<Service> list = ServiceDAO.getInstance().SelectAll();
+        for (Service p : list){
+            model.addRow(new Object[]{p.getServiceCode(), p.getServiceName(), p.getServiceNotes(), p.getServicePrice()});
+        }
+        serviceTable.setModel(model);
+    }
+    
+    
+    
     public ManagerForm() {
         initComponents();
         this.setIconImage(new ImageIcon("Images/pet-shop.PNG").getImage());
+        updateProductListTable();
+        updateServiceTable();
     }
 
     /**
@@ -545,7 +573,6 @@ public class ManagerForm extends javax.swing.JFrame {
         ));
         productTable.setGridColor(new java.awt.Color(255, 255, 255));
         productTable.setSelectionBackground(new java.awt.Color(51, 255, 255));
-        productTable.setSelectionForeground(new java.awt.Color(255, 255, 255));
         productTable.setShowGrid(true);
         jScrollPane3.setViewportView(productTable);
 
@@ -690,10 +717,10 @@ public class ManagerForm extends javax.swing.JFrame {
 
         serviceTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {"CS", "CS001", "Vệ sinh thú cưng", "Tắm, xấy khô"}
+
             },
             new String [] {
-                "Loại hình dịch vụ", "Mã dịch vụ", "Tên dịch vụ", "Ghi chú"
+                "Mã dịch vụ", "Tên dịch vụ", "Ghi chú", "Giá bán"
             }
         ));
         jScrollPane5.setViewportView(serviceTable);
@@ -1320,7 +1347,7 @@ public class ManagerForm extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(0, 3, Short.MAX_VALUE)
+                        .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 9, Short.MAX_VALUE))
                     .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -1472,11 +1499,12 @@ public class ManagerForm extends javax.swing.JFrame {
         } 
         else {
             DefaultTableModel model = (DefaultTableModel) serviceTable.getModel();
-            String type = model.getValueAt(index, 0).toString();
-            String code = model.getValueAt(index, 1).toString();
-            String name = model.getValueAt(index, 2).toString();
-            String note = model.getValueAt(index, 3).toString();
-            InputServiceForm data = new InputServiceForm(type,code,name,note,index);
+            String code = model.getValueAt(index, 0).toString();
+            String name = model.getValueAt(index, 1).toString();
+            String price = model.getValueAt(index, 3).toString();
+            String note = model.getValueAt(index, 2).toString();
+            
+            InputServiceForm data = new InputServiceForm(code,name,note,price,index);
             data.setVisible(true);
             data.pack();
         }
