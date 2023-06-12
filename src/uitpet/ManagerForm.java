@@ -4,16 +4,22 @@
  */
 package uitpet;
 
+import ClassModel.Account;
 import ClassModel.Customer;
 import ClassModel.Employee;
+import ClassModel.Pet;
 import ClassModel.Product;
 import ClassModel.Service;
+import DAOmodel.AccountDAO;
 import DAOmodel.CustomerDAO;
 import DAOmodel.EmployeeDAO;
+import DAOmodel.PetDAO;
 import DAOmodel.ProductDAO;
 import DAOmodel.ServiceDAO;
 import java.awt.Color;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
@@ -33,6 +39,20 @@ public class ManagerForm extends javax.swing.JFrame {
      * Creates new form ManagerForm
      */
     int state = 1;
+    Employee currentEmp = null;
+    Account currentAcc = null;
+    public static ArrayList<Product> productArrayOrigin = ProductDAO.getInstance().SelectAll();
+    public static ArrayList<Product> productArray = ProductDAO.getInstance().SelectAll();
+    public static ArrayList<Product> productArrayDel = new ArrayList<>();
+    public static ArrayList<Pet> petArray = PetDAO.getInstance().SelectAll();
+    public static ArrayList<Pet> petArrayDel = new ArrayList<>();
+    public static ArrayList<Service> serviceArray = ServiceDAO.getInstance().SelectAll();
+    SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");  
+    Date date = new Date();  
+    int deletedProduct[] = new int[productArray.size()];
+    int deletedPet[] = new int[petArray.size() + 1 ];
+    int rowDel = 0;
+    int insertedPet[] = new int[petArray.size() + 1];
     public void removeClicked( int index ) {
         
         switch(index) {
@@ -153,15 +173,159 @@ public class ManagerForm extends javax.swing.JFrame {
         }
         serviceTable.setModel(model);
     }
+     
+    public static void updatePetTable(){
+        DefaultTableModel model = (DefaultTableModel) serviceTypeTable.getModel();
+        model.setRowCount(0);
+        ArrayList<Pet> listArray = PetDAO.getInstance().SelectAll();
+        for (Pet p : listArray){
+            model.addRow(new Object[]{p.getCode(), p.getName(), p.getType(), p.getDateOfAcc(), p.getPrice(), p.getNotes()});
+        }
+        serviceTypeTable.setModel(model);
+    }
+    
+    public static void updateEmpTable(){
+        DefaultTableModel model = (DefaultTableModel) empTable.getModel();
+        model.setRowCount(0);
+        ArrayList<Employee> list = EmployeeDAO.getInstance().SelectAll();
+        for (Employee p : list){
+            System.out.println(p);
+            model.addRow(new Object[]{p.getCode(),p.getName(),p.getDateOfBirth(),p.getAddress(),p.getEmail(),p.getPhoneNumber(),p.getDateOfEmployee(),p.getSalary()});
+        }
+        empTable.setModel(model);
+    }
+    
+    public static void updatePetList() {
+        DefaultListModel list  = new DefaultListModel() ;   
+//        ArrayList<Pet> listArray = PetDAO.getInstance().SelectAll();
+//        System.out.println(listArray);
+        for (Pet p : petArray){
+            list.addElement(p.getType()+" "+p.getName()+" "+p.getNotes());
+        }
+        petList.setModel(list);
+    }
+    
+    public static void updateProductList() {
+        DefaultListModel list  = new DefaultListModel() ;   
+//        ArrayList<Product> listArray = ProductDAO.getInstance().SelectAll();
+//        System.out.println(listArray);
+        for (Product p : productArray){
+            list.addElement(p.getProductName() + " : " + p.getQuantity());
+        }
+        productList.setModel(list);
+    }
+    
+    public static void updateServiceList() {
+        DefaultListModel list  = new DefaultListModel() ;   
+        ArrayList<Service> listArray = ServiceDAO.getInstance().SelectAll();
+        System.out.println(listArray);
+        for (Service p : listArray){
+            list.addElement(p.getServiceName());
+        }
+        serviceList.setModel(list);
+    }
+    
+    public static boolean checkDeleted(int x, int a[]) {
+        for (int i=0 ; i<a.length;i++) {
+            if (x == a[i]) return true;
+        }
+        return false;
+    }
     
     
+    public static void reAddPet(String id) {
+        for (Pet p : petArrayDel){
+//            System.out.println("Deleted");
+            if (p.getCode().equals(id)) {
+                System.out.println("Added");
+                petArray.add(p);
+                System.out.println(petArray);
+                System.out.println("Deleted");
+                petArrayDel.remove(p);
+                System.out.println(petArrayDel);
+                updatePetList();
+                return;
+            }
+        }
+    }
+    
+    public static void reAddProduct(String id) {
+        for (Product p : productArrayDel){
+//            System.out.println("Deleted");
+            if (p.getProductCode().equals(id)) {
+                p.setQuantity(1);
+                productArray.add(p);
+                productArrayDel.remove(p);
+//                System.out.println(petArrayDel);
+                updateProductList();
+                return;
+            }
+        } 
+        int i = 0;
+        for (Product p : productArray){
+            
+//            System.out.println("Deleted");
+            if (p.getProductCode().equals(id)) {
+                p.setQuantity(p.getQuantity() + 1);
+                productArray.set(i, p);
+                productArrayDel.remove(p);
+//                System.out.println(petArrayDel);
+                updateProductList();
+                return;
+            }
+            i++;
+        }
+        
+    }
+    
+    public static void setSumCost()  {
+        int sum = 0;
+        if (productTable.getRowCount() == 0) {
+            sum = 0;
+        }
+        else {
+            for (int i = 0; i < productTable.getRowCount(); i++) {  
+                sum += Integer.parseInt(productTable.getValueAt(i, 3).toString()) * Integer.parseInt(productTable.getValueAt(i, 4).toString()) ;
+            }
+
+        }
+        
+        sumPrice.setText("Tổng tiền: " + Integer.toString(sum));
+    }
+
     
     public ManagerForm() {
         initComponents();
         this.setIconImage(new ImageIcon("Images/pet-shop.PNG").getImage());
         updateProductListTable();
         updateServiceTable();
-    }
+        updatePetTable();
+        updateEmpTable();
+        updatePetList();
+        updateProductList();
+        updateServiceList();
+        
+    } 
+    
+    
+    public ManagerForm(String code) {
+        currentAcc = AccountDAO.getAccountFromAccountId(code);
+        currentEmp = EmployeeDAO.getEmpFromAccountId(currentAcc.getAccountId());
+        System.out.println(currentAcc);
+        System.out.println(currentEmp);
+        initComponents();
+        nameEmp.setText(currentEmp.getName());
+        dateLable.setText((String) formatter.format(date));
+        this.setIconImage(new ImageIcon("Images/pet-shop.PNG").getImage());
+        updateProductListTable();
+        updateServiceTable();
+        updatePetTable();
+        updateEmpTable();
+        updatePetList();
+        updateProductList();
+        updateServiceList();
+        
+    } 
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -192,7 +356,7 @@ public class ManagerForm extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
-        jLabel7 = new javax.swing.JLabel();
+        dateLable = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
         jTextField1 = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
@@ -205,11 +369,14 @@ public class ManagerForm extends javax.swing.JFrame {
         jScrollPane2 = new javax.swing.JScrollPane();
         jTextArea1 = new javax.swing.JTextArea();
         jScrollPane4 = new javax.swing.JScrollPane();
+        petList = new javax.swing.JList<>();
+        jLabel8 = new javax.swing.JLabel();
+        jScrollPane6 = new javax.swing.JScrollPane();
         serviceList = new javax.swing.JList<>();
         jPanel8 = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
         productTable = new javax.swing.JTable();
-        jLabel20 = new javax.swing.JLabel();
+        sumPrice = new javax.swing.JLabel();
         jButton20 = new javax.swing.JButton();
         jButton21 = new javax.swing.JButton();
         jButton19 = new javax.swing.JButton();
@@ -279,7 +446,7 @@ public class ManagerForm extends javax.swing.JFrame {
         jButton13 = new javax.swing.JButton();
         jButton14 = new javax.swing.JButton();
         jButton15 = new javax.swing.JButton();
-        jLabel8 = new javax.swing.JLabel();
+        nameEmp = new javax.swing.JLabel();
 
         javax.swing.GroupLayout jPanel24Layout = new javax.swing.GroupLayout(jPanel24);
         jPanel24.setLayout(jPanel24Layout);
@@ -298,6 +465,7 @@ public class ManagerForm extends javax.swing.JFrame {
         setResizable(false);
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
+        jPanel1.setMaximumSize(new java.awt.Dimension(2147483647, 2147483647));
 
         jPanel2.setBackground(new java.awt.Color(255, 255, 255));
         jPanel2.setLayout(new java.awt.GridLayout(7, 0, 10, 0));
@@ -432,12 +600,11 @@ public class ManagerForm extends javax.swing.JFrame {
         jLabel6.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel6.setText("Ngày tạo hóa đơn");
 
-        jLabel7.setText("22-5-2023");
+        dateLable.setText("22-5-2023");
 
         jLabel9.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel9.setText("SĐT khách hàng");
 
-        jTextField1.setText("0865904101");
         jTextField1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jTextField1ActionPerformed(evt);
@@ -447,7 +614,6 @@ public class ManagerForm extends javax.swing.JFrame {
         jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel3.setText("Tên khách hàng");
 
-        jTextField2.setText("Ming Cu");
         jTextField2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jTextField2ActionPerformed(evt);
@@ -460,11 +626,6 @@ public class ManagerForm extends javax.swing.JFrame {
         jLabel10.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel10.setText("Sản phẩm");
 
-        productList.setModel(new javax.swing.AbstractListModel<String>() {
-            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
-            public int getSize() { return strings.length; }
-            public String getElementAt(int i) { return strings[i]; }
-        });
         productList.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 productListMouseClicked(evt);
@@ -479,15 +640,25 @@ public class ManagerForm extends javax.swing.JFrame {
         jTextArea1.setRows(5);
         jScrollPane2.setViewportView(jTextArea1);
 
-        serviceList.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        serviceList.setDoubleBuffered(true);
-        serviceList.setInheritsPopupMenu(true);
+        petList.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        petList.setDoubleBuffered(true);
+        petList.setInheritsPopupMenu(true);
+        petList.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                petListMouseClicked(evt);
+            }
+        });
+        jScrollPane4.setViewportView(petList);
+
+        jLabel8.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel8.setText("Dịch vụ");
+
         serviceList.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 serviceListMouseClicked(evt);
             }
         });
-        jScrollPane4.setViewportView(serviceList);
+        jScrollPane6.setViewportView(serviceList);
 
         javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
         jPanel7.setLayout(jPanel7Layout);
@@ -496,29 +667,34 @@ public class ManagerForm extends javax.swing.JFrame {
             .addGroup(jPanel7Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(jPanel7Layout.createSequentialGroup()
                         .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(jPanel7Layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel7Layout.createSequentialGroup()
                         .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 465, Short.MAX_VALUE)
+                            .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel7Layout.createSequentialGroup()
                                 .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 226, Short.MAX_VALUE)
-                                    .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, 226, Short.MAX_VALUE)
                                     .addComponent(jTextField1)
                                     .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                     .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 49, Short.MAX_VALUE)
+                                    .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(jScrollPane4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                     .addComponent(jLabel10, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jLabel7, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jTextField2, javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jLabel6, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 190, Short.MAX_VALUE)
-                                    .addComponent(jScrollPane1))))
-                        .addGap(17, 17, 17))))
+                                    .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 260, Short.MAX_VALUE)
+                                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 234, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 233, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                        .addComponent(dateLable, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(jLabel6, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 238, Short.MAX_VALUE))))
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel7Layout.createSequentialGroup()
+                                .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, 262, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 0, Short.MAX_VALUE)))
+                        .addGap(52, 52, 52))))
         );
         jPanel7Layout.setVerticalGroup(
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -530,7 +706,7 @@ public class ManagerForm extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel7))
+                    .addComponent(dateLable))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -545,24 +721,25 @@ public class ManagerForm extends javax.swing.JFrame {
                     .addComponent(jLabel10))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(jPanel7Layout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 195, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(88, 88, 88))
-                    .addGroup(jPanel7Layout.createSequentialGroup()
-                        .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 228, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jLabel11)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(189, 189, 189))
+                    .addComponent(jScrollPane4)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 195, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel11)
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(51, 51, 51))
         );
 
         jPanel8.setBackground(new java.awt.Color(255, 255, 255));
         jPanel8.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(51, 255, 255)));
+        jPanel8.setPreferredSize(new java.awt.Dimension(800, 617));
 
         jScrollPane3.setBackground(new java.awt.Color(255, 255, 255));
 
-        productTable.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
         productTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
@@ -576,14 +753,19 @@ public class ManagerForm extends javax.swing.JFrame {
         productTable.setShowGrid(true);
         jScrollPane3.setViewportView(productTable);
 
-        jLabel20.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabel20.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        jLabel20.setText("Tổng Tiền: 200000000000 ");
+        sumPrice.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        sumPrice.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        sumPrice.setText("Tổng Tiền:  ");
 
         jButton20.setBackground(new java.awt.Color(153, 255, 153));
         jButton20.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
         jButton20.setForeground(new java.awt.Color(102, 0, 51));
         jButton20.setText("Xóa");
+        jButton20.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton20ActionPerformed(evt);
+            }
+        });
 
         jButton21.setBackground(new java.awt.Color(153, 255, 153));
         jButton21.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
@@ -609,52 +791,53 @@ public class ManagerForm extends javax.swing.JFrame {
         jPanel8.setLayout(jPanel8Layout);
         jPanel8Layout.setHorizontalGroup(
             jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-            .addComponent(jLabel20, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 561, Short.MAX_VALUE)
             .addGroup(jPanel8Layout.createSequentialGroup()
                 .addGap(30, 30, 30)
-                .addComponent(jButton19, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(29, 29, 29)
-                .addComponent(jButton21)
-                .addGap(27, 27, 27)
-                .addComponent(jButton20, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(21, 21, 21))
+                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(sumPrice, javax.swing.GroupLayout.PREFERRED_SIZE, 275, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel8Layout.createSequentialGroup()
+                        .addComponent(jButton19, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jButton21)
+                        .addGap(32, 32, 32)
+                        .addComponent(jButton20, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel8Layout.setVerticalGroup(
             jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel8Layout.createSequentialGroup()
                 .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 481, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel20, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(sumPrice, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(27, 27, 27)
                 .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton19, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButton21, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButton20, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(141, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
         jPanel5Layout.setHorizontalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel6, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(jPanel5Layout.createSequentialGroup()
-                .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, 488, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(jPanel8, javax.swing.GroupLayout.DEFAULT_SIZE, 563, Short.MAX_VALUE)
+                .addContainerGap())
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(jPanel5Layout.createSequentialGroup()
-                        .addComponent(jPanel8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addContainerGap())
+                    .addComponent(jPanel8, javax.swing.GroupLayout.DEFAULT_SIZE, 684, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout invoiceLayoutLayout = new javax.swing.GroupLayout(invoiceLayout);
@@ -811,11 +994,11 @@ public class ManagerForm extends javax.swing.JFrame {
 
             },
             new String [] {
-                "Mã ", "Loại", "Tên ", "Ghi chú", "Tuổi", "Giá"
+                "Mã ", "Tên ", "Loại", "Ngày nhập", "Giá", "Ghi chú"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Integer.class, java.lang.Long.class
+                java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Integer.class, java.lang.Long.class, java.lang.Object.class
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -828,7 +1011,7 @@ public class ManagerForm extends javax.swing.JFrame {
         jPanel27.setLayout(jPanel27Layout);
         jPanel27Layout.setHorizontalGroup(
             jPanel27Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane7, javax.swing.GroupLayout.DEFAULT_SIZE, 931, Short.MAX_VALUE)
+            .addComponent(jScrollPane7, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 913, Short.MAX_VALUE)
         );
         jPanel27Layout.setVerticalGroup(
             jPanel27Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -950,7 +1133,7 @@ public class ManagerForm extends javax.swing.JFrame {
         jPanel14Layout.setHorizontalGroup(
             jPanel14Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel14Layout.createSequentialGroup()
-                .addContainerGap(542, Short.MAX_VALUE)
+                .addContainerGap(536, Short.MAX_VALUE)
                 .addComponent(jButton7, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(26, 26, 26)
                 .addComponent(jButton8, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -983,7 +1166,7 @@ public class ManagerForm extends javax.swing.JFrame {
             .addGroup(jPanel15Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel17, javax.swing.GroupLayout.PREFERRED_SIZE, 236, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(671, Short.MAX_VALUE))
+                .addContainerGap(665, Short.MAX_VALUE))
         );
         jPanel15Layout.setVerticalGroup(
             jPanel15Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1083,7 +1266,7 @@ public class ManagerForm extends javax.swing.JFrame {
             .addGroup(jPanel17Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel18, javax.swing.GroupLayout.PREFERRED_SIZE, 261, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(646, Short.MAX_VALUE))
+                .addContainerGap(640, Short.MAX_VALUE))
         );
         jPanel17Layout.setVerticalGroup(
             jPanel17Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1149,7 +1332,7 @@ public class ManagerForm extends javax.swing.JFrame {
             .addGroup(jPanel22Layout.createSequentialGroup()
                 .addGap(15, 15, 15)
                 .addComponent(jTextField6, javax.swing.GroupLayout.PREFERRED_SIZE, 419, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(479, Short.MAX_VALUE))
+                .addContainerGap(474, Short.MAX_VALUE))
         );
         jPanel22Layout.setVerticalGroup(
             jPanel22Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1213,7 +1396,7 @@ public class ManagerForm extends javax.swing.JFrame {
             .addGroup(jPanel23Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(786, Short.MAX_VALUE))
+                .addContainerGap(775, Short.MAX_VALUE))
         );
         jPanel23Layout.setVerticalGroup(
             jPanel23Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1264,7 +1447,7 @@ public class ManagerForm extends javax.swing.JFrame {
             .addGroup(jPanel25Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel19, javax.swing.GroupLayout.PREFERRED_SIZE, 248, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(659, Short.MAX_VALUE))
+                .addContainerGap(653, Short.MAX_VALUE))
         );
         jPanel25Layout.setVerticalGroup(
             jPanel25Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1336,9 +1519,9 @@ public class ManagerForm extends javax.swing.JFrame {
 
         jPanel4.add(empLayout, "card8");
 
-        jLabel8.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabel8.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel8.setText("Nguyễn Lê Khang");
+        nameEmp.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        nameEmp.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        nameEmp.setText("Nguyễn Lê Khang");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -1346,12 +1529,12 @@ public class ManagerForm extends javax.swing.JFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 9, Short.MAX_VALUE))
+                    .addComponent(nameEmp, javax.swing.GroupLayout.DEFAULT_SIZE, 224, Short.MAX_VALUE)
                     .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel8, javax.swing.GroupLayout.DEFAULT_SIZE, 222, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addContainerGap(32, Short.MAX_VALUE)
+                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addGap(18, 18, 18)
                 .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, 917, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -1361,7 +1544,7 @@ public class ManagerForm extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(nameEmp, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 59, Short.MAX_VALUE)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 299, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(160, 160, 160))
@@ -1458,28 +1641,55 @@ public class ManagerForm extends javax.swing.JFrame {
 
     private void jButton13ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton13ActionPerformed
         // TODO add your handling code here:
-        InputEmployeeForm data = new InputEmployeeForm();
+        RegisterFrame data = new RegisterFrame();
         data.setVisible(true);
         data.pack();
     }//GEN-LAST:event_jButton13ActionPerformed
 
-    private void serviceListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_serviceListMouseClicked
+    private void petListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_petListMouseClicked
         // TODO add your handling code here:
-        String value = serviceList.getSelectedValue();
+        int index = petList.getSelectedIndex();
+        Pet pet = petArray.get(index);
+        petArrayDel.add(pet);
+        petArray.remove(pet);
+        ((DefaultListModel) petList.getModel()).remove(index);
         DefaultTableModel model = (DefaultTableModel) productTable.getModel(); 
-        model.insertRow(0,new Object[] { "DV","DV001",value,1,2000000 });
-        System.out.println(existsInTable(productTable,new Object[] { "DV","DV001","A",1,2000000 }));
-        
-    }//GEN-LAST:event_serviceListMouseClicked
+        model.insertRow(0,new Object[] { "Thú cưng",pet.getCode(),pet.getName(),1,pet.getPrice() });
+        setSumCost();
+    }//GEN-LAST:event_petListMouseClicked
 
     private void productListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_productListMouseClicked
         // TODO add your handling code here:
-        String value = productList.getSelectedValue();
+        boolean isExisted = false;
+        int index = productList.getSelectedIndex();
         DefaultTableModel model = (DefaultTableModel) productTable.getModel(); 
 //        model.insertRow(0,new Object[] { "SP","SP001",value,1,2000000 });
-
-        addToTable(productTable, new Object[]{ "SP","SP001",value,1,2000000 }, ERROR);
-        
+        Product p = productArray.get(index);
+        p.setQuantity(p.getQuantity()-1);
+        if (p.getQuantity() == 0) {
+            productArray.remove(index);
+            productArrayDel.add(productArrayOrigin.get(index));
+        } else {
+            productArray.set(index,p);
+        }
+        updateProductList();
+        if (productTable.getRowCount() == 0) {
+            model.insertRow(0,new Object[] { "Sản phẩm",p.getProductCode(),p.getProductName(),1,p.getImportPrice() });
+        }
+        else {
+            for (int i = 0; i < productTable.getRowCount(); i++) {  
+                
+                if (productTable.getValueAt(i, 1).equals(p.getProductCode())) {
+                    System.out.println(p.getProductCode());
+                    int q = Integer.parseInt(productTable.getValueAt(i, 3).toString());
+                    productTable.setValueAt(q+1,i, 3);
+                    isExisted = true;
+                    break;
+                } 
+            }
+            if (!isExisted) model.insertRow(0,new Object[] { "Sản phẩm",p.getProductCode(),p.getProductName(),1,p.getImportPrice() });
+        }
+        setSumCost();
     }//GEN-LAST:event_productListMouseClicked
 
     private void jButton19ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton19ActionPerformed
@@ -1617,8 +1827,13 @@ public class ManagerForm extends javax.swing.JFrame {
             String email = model.getValueAt(index, 4).toString();
             String phone = model.getValueAt(index, 5).toString();
             String sd = model.getValueAt(index, 6).toString();
-            int salary = Integer.parseInt(model.getValueAt(index, 7).toString());
-            InputEmployeeForm data = new InputEmployeeForm(code,name,bd,add,email,phone,sd,salary,index);
+//            String role = model.getValueAt(, NORMAL)
+            System.out.println(code);
+            String accountId = EmployeeDAO.GetAccountIdEmp(code);
+            System.out.println("there");
+            Account account = AccountDAO.GetAccountIdAcc(accountId);
+            String salary =model.getValueAt(index, 7).toString();
+            RegisterFrame data = new RegisterFrame(code,name,bd,add,email,phone,sd,salary,account.getAccountRole(),account.getAccountName(),account.getAccountPassword(),account.getAccountPassword(), index);
             data.setVisible(true);
             data.pack();
         }
@@ -1633,8 +1848,8 @@ public class ManagerForm extends javax.swing.JFrame {
             String empId = (String) model.getValueAt(index, 0);
             Employee employee = new Employee();
             employee.setCode(empId);
-            model.removeRow(index);
             int deleteRow = EmployeeDAO.getInstance().delete(employee);
+            model.removeRow(index);
         }
     }//GEN-LAST:event_jButton15ActionPerformed
 
@@ -1647,15 +1862,107 @@ public class ManagerForm extends javax.swing.JFrame {
 
     private void jButton25ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton25ActionPerformed
         // TODO add your handling code here:
+        int index = serviceTypeTable.getSelectedRow();
+        if (index > -1) {
+            DefaultTableModel model = (DefaultTableModel) serviceTypeTable.getModel(); 
+//            Lấy ra product ID của hàng đã đc người dùng select
+            String petId = (String) model.getValueAt(index, 0);
+            Pet pet = new Pet();
+            pet.setCode(petId);
+            model.removeRow(index);
+            int deleteRow = PetDAO.getInstance().delete(pet);
+        }
     }//GEN-LAST:event_jButton25ActionPerformed
 
     private void jButton26ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton26ActionPerformed
         // TODO add your handling code here:
+        InputPetForm1 input = new InputPetForm1();
+        input.setVisible(true);
+        
     }//GEN-LAST:event_jButton26ActionPerformed
 
     private void jButton27ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton27ActionPerformed
         // TODO add your handling code here:
+        int index = serviceTypeTable.getSelectedRow();
+        if (index == -1) {
+            JOptionPane.showMessageDialog(null, "Chọn một thú cưng để sửa");
+        } 
+        else {
+            DefaultTableModel model = (DefaultTableModel) serviceTypeTable.getModel();
+            String code = model.getValueAt(index, 0).toString();
+            String name = model.getValueAt(index, 1).toString();
+            String type = model.getValueAt(index, 2).toString();
+            String date = model.getValueAt(index, 3).toString();
+            int price = Integer.parseInt(model.getValueAt(index, 4).toString()) ;
+            String note = model.getValueAt(index, 5).toString();
+            InputPetForm1 data = new InputPetForm1(code, name, type, note, date, price, index);
+            data.setVisible(true);
+            data.pack();
+        }
     }//GEN-LAST:event_jButton27ActionPerformed
+
+    private void jButton20ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton20ActionPerformed
+        // TODO add your handling code here:
+        int index = productTable.getSelectedRow();
+        DefaultTableModel model = (DefaultTableModel) productTable.getModel();
+        String id = model.getValueAt(index, 1).toString();
+        String type = model.getValueAt(index, 0).toString();
+        if (type.equals("Thú cưng")) { 
+                System.out.println("petttttttttttttttttttt");
+                reAddPet(id);
+                model.removeRow(index);
+                updatePetTable();
+             
+        }
+        if (type.equals("Sản phẩm")) {
+            int q = (int) model.getValueAt(index, 3) - 1;
+            if (q == 0) {
+                   
+                    model.removeRow(index);
+            } else {
+                productTable.setValueAt(q, index, 3);
+                    
+            }
+            reAddProduct(id);
+            updateProductList();
+        }
+        if (type.equals("Dịch vụ")) {
+            int q = (int) model.getValueAt(index, 3) - 1;
+            if (q == 0) {
+                    model.removeRow(index);
+            } else {
+                productTable.setValueAt(q, index, 3);
+                    
+            }
+        }
+        setSumCost();
+    }//GEN-LAST:event_jButton20ActionPerformed
+
+    private void serviceListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_serviceListMouseClicked
+        // TODO add your handling code here:
+        int index = serviceList.getSelectedIndex();
+        boolean isExisted = false;
+        Service s = serviceArray.get(index);
+        DefaultTableModel model = (DefaultTableModel) productTable.getModel(); 
+        if (productTable.getRowCount() == 0) {
+            model.insertRow(0,new Object[] { "Dịch vụ",s.getServiceCode(),s.getServiceName(),1,s.getServicePrice() });
+        }
+        else {
+            for (int i = 0; i < productTable.getRowCount(); i++) {  
+                
+                if (productTable.getValueAt(i, 1).equals(s.getServiceCode())) {
+//                    System.out.println(p.getProductCode());
+                    int q = Integer.parseInt(productTable.getValueAt(i, 3).toString());
+                    productTable.setValueAt(q+1,i, 3);
+                    isExisted = true;
+                    break;
+                } 
+            }
+            if (!isExisted) model.insertRow(0,new Object[] { "Dịch vụ",s.getServiceCode(),s.getServiceName(),1,s.getServicePrice() });
+        }
+       
+        setSumCost();
+    }//GEN-LAST:event_serviceListMouseClicked
 
     public static void replaceRowToServiceTable(Object[] data,int row) {
         DefaultTableModel modelservice = (DefaultTableModel) serviceTable.getModel(); 
@@ -1678,6 +1985,11 @@ public class ManagerForm extends javax.swing.JFrame {
     
     public static void addRowToProductListTable(Object[] data) {
         DefaultTableModel modelservice = (DefaultTableModel) productListTable.getModel(); 
+        modelservice.addRow(data);
+    }
+    
+    public static void addRowToPetTable(Object[] data) {
+        DefaultTableModel modelservice = (DefaultTableModel) serviceTypeTable.getModel(); 
         modelservice.addRow(data);
     }
     
@@ -1747,6 +2059,7 @@ public class ManagerForm extends javax.swing.JFrame {
     private javax.swing.JLabel customerBtn;
     private javax.swing.JPanel customerLayout;
     private static javax.swing.JTable customerTable;
+    private javax.swing.JLabel dateLable;
     private javax.swing.JLabel empBtn;
     private javax.swing.JPanel empLayout;
     private static javax.swing.JTable empTable;
@@ -1780,12 +2093,10 @@ public class ManagerForm extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel18;
     private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel20;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
@@ -1825,6 +2136,7 @@ public class ManagerForm extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JScrollPane jScrollPane5;
+    private javax.swing.JScrollPane jScrollPane6;
     private javax.swing.JScrollPane jScrollPane7;
     private javax.swing.JScrollPane jScrollPane8;
     private javax.swing.JScrollPane jScrollPane9;
@@ -1838,18 +2150,21 @@ public class ManagerForm extends javax.swing.JFrame {
     private javax.swing.JTextField jTextField2;
     private javax.swing.JTextField jTextField3;
     private javax.swing.JTextField jTextField6;
+    private javax.swing.JLabel nameEmp;
     private javax.swing.JPanel petLayout;
+    private static javax.swing.JList<String> petList;
     private javax.swing.JLabel productBtn;
     private javax.swing.JPanel productLayout;
-    private javax.swing.JList<String> productList;
+    private static javax.swing.JList<String> productList;
     private static javax.swing.JTable productListTable;
-    private javax.swing.JTable productTable;
+    private static javax.swing.JTable productTable;
     private javax.swing.JLabel serviceBtn;
     private javax.swing.JPanel serviceLayout;
-    private javax.swing.JList<String> serviceList;
+    private static javax.swing.JList<String> serviceList;
     private static javax.swing.JTable serviceTable;
-    private javax.swing.JTable serviceTypeTable;
+    private static javax.swing.JTable serviceTypeTable;
     private javax.swing.JLabel statisticBtn;
     private javax.swing.JPanel statisticLayout;
+    private static javax.swing.JLabel sumPrice;
     // End of variables declaration//GEN-END:variables
 }

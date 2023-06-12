@@ -19,6 +19,34 @@ public class AccountDAO implements DAOInterface<Account>{
         return new AccountDAO();
     }
     
+    public static Account getAccountFromAccountId(String accountId){
+        Account acc = null;
+        try {
+            Connection con = JDBCUtil.getConnection();
+            
+            String sql = "SELECT * FROM ACCOUNT WHERE ACCOUNT_NAME = ?";
+
+            PreparedStatement pst = con.prepareStatement(sql);
+            pst.setString(1, accountId);
+            
+            ResultSet rs = pst.executeQuery();
+            System.out.println("You have done: " + sql);
+            
+            while(rs.next()){
+                String code = rs.getString("ACCOUNT_ID");
+                String name = rs.getString("ACCOUNT_NAME");
+                String password = rs.getString("ACCOUNT_PASSWORD");
+                String role = rs.getString("ROLE");
+                acc = new Account(code, name, password, role);
+            }
+            JDBCUtil.closeConnection(con);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Cannot select by Id! Please try again!");
+        }
+        return acc;
+    }
+
     @Override
     public int insert(Account t) {
         int result = 0;
@@ -54,7 +82,7 @@ public class AccountDAO implements DAOInterface<Account>{
             
             String sql = "UPDATE ACCOUNT " 
                     + "SET ACCOUNT_NAME = ?, " + "ACCOUNT_PASSWORD= ?, "
-                    + "ROLE = ?, " + "WHERE ACCOUNT_ID = ?";
+                    + "ROLE = ? " + "WHERE ACCOUNT_ID = ?";
                     
             PreparedStatement pst = c.prepareStatement(sql);
             System.out.println("You have done: " + sql);
@@ -127,6 +155,37 @@ public class AccountDAO implements DAOInterface<Account>{
         }
         return accountList;
     }
+    
+    public static Account GetAccountIdAcc(String code) {
+    Account account = null;
+        System.out.println(code);
+    try {
+        
+        Connection con = JDBCUtil.getConnection();
+
+        String sql = "SELECT * FROM ACCOUNT WHERE ACCOUNT_ID = ?";
+
+        PreparedStatement pst = con.prepareStatement(sql);
+        pst.setString(1, code); // Sửa từ e.getCode() thành code
+
+        ResultSet rs = pst.executeQuery();
+        System.out.println("You have done: " + sql);
+
+        while (rs.next()) { // Sửa while thành if, vì ta chỉ cần lấy một giá trị accountId
+            String newCode = rs.getString("ACCOUNT_ID"); // hoặc rs.getString(number) number ở đây là thứ tự cột
+            String name = rs.getString("ACCOUNT_NAME");
+            String password = rs.getString("ACCOUNT_PASSWORD");
+            String role = rs.getString("ROLE");   
+            account = new Account(newCode, name, password, role);        
+        }
+        
+        JDBCUtil.closeConnection(con);
+    } catch (SQLException ex) {
+        ex.printStackTrace();
+        System.out.println("Cannot select by Id Account! Please try again!");
+    }
+    return account;
+}
 
     @Override
     public Account SelectById(Account t) {

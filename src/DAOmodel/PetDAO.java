@@ -18,6 +18,27 @@ public class PetDAO implements DAOInterface<Pet>{
         return new PetDAO();
     }
     
+    public static boolean isExistedID(String code){
+        boolean check = false;
+        try {
+            Connection conn = JDBCUtil.getConnection();
+            String sql = "SELECT COUNT(*) FROM PET WHERE PET_CODE = ?";
+            PreparedStatement pst = conn.prepareStatement(sql);
+            pst.setString(1, code);
+            
+            ResultSet rs = pst.executeQuery();
+            rs.next();
+            int count = rs.getInt(1);
+            if (count > 0){
+                check = true;
+            }
+            JDBCUtil.closeConnection(conn);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return check;
+    }
+    
     @Override
     public int insert(Pet t) {
         int result = 0;

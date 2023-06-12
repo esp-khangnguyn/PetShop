@@ -19,11 +19,11 @@ public class Employee {
     private String position; // vị trí chức vụ
     private int salary;
     private String note;
-
+    private String accountId;
     public Employee() {
     }
 
-    public Employee(String code, String name, String dateOfBirth, String address, String email, String phoneNumber, String dateOfEmployee, String position, int salary, String note) {
+    public Employee(String code, String name, String dateOfBirth, String address, String email, String phoneNumber, String dateOfEmployee, String position, int salary, String note, String accountId) {
         this.code = code;
         this.name = name;
         this.dateOfBirth = dateOfBirth;
@@ -34,6 +34,7 @@ public class Employee {
         this.position = position;
         this.salary = salary;
         this.note = note;
+        this.accountId = accountId;
     }
 
     public String getCode() {
@@ -115,6 +116,20 @@ public class Employee {
     public void setNote(String note) {
         this.note = note;
     }
+
+    public String getAccountId() {
+        return accountId;
+    }
+
+    public void setAccountId(String accountId) {
+        this.accountId = accountId;
+    }
+
+    @Override
+    public String toString() {
+        return "Employee{" + "code=" + code + ", name=" + name + ", dateOfBirth=" + dateOfBirth + ", address=" + address + ", email=" + email + ", phoneNumber=" + phoneNumber + ", dateOfEmployee=" + dateOfEmployee + ", position=" + position + ", salary=" + salary + ", note=" + note + ", accountId=" + accountId + '}';
+    }
+    
     
     
     

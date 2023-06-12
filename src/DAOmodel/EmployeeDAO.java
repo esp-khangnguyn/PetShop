@@ -47,7 +47,7 @@ public class EmployeeDAO implements DAOInterface<Employee>{
             Connection c = JDBCUtil.getConnection();
             
             String sql = "INSERT INTO EMPLOYEE(EMPLOYEE_CODE, EMPLOYEE_NAME, DATE_OF_BIRTH, ADDRESS, "
-                    + "EMAIL, PHONE_NUMBER, DATE_OF_EMPLOYMENT, POSITION, SALARY, NOTES)" + " VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                    + "EMAIL, PHONE_NUMBER, DATE_OF_EMPLOYMENT, POSITION, SALARY, NOTES, ACCOUNT_ID)" + " VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)";
             
             PreparedStatement pst = c.prepareStatement(sql);
             System.out.println("You have done: " + sql);
@@ -62,6 +62,7 @@ public class EmployeeDAO implements DAOInterface<Employee>{
             pst.setString(8, t.getPosition());
             pst.setInt(9, t.getSalary());
             pst.setString(10, t.getNote());
+            pst.setString(11, t.getAccountId());
             
             result = pst.executeUpdate();
             System.out.println("Have " + result + " been changed!");
@@ -84,7 +85,7 @@ public class EmployeeDAO implements DAOInterface<Employee>{
                     + "DATE_OF_BIRTH = ?, " + "ADDRESS = ?, " 
                     + "EMAIL = ?, " + "PHONE_NUMBER = ?, " 
                     + "DATE_OF_EMPLOYMENT = ?, " + "POSITION = ?, "
-                    + "SALARY = ?, " + "NOTES= ?" + " WHERE EMPLOYEE_CODE = ?";
+                    + "SALARY = ?, " + "NOTES= ? "  + " WHERE EMPLOYEE_CODE = ?";
                     
             PreparedStatement pst = c.prepareStatement(sql);
             System.out.println("You have done: " + sql);
@@ -100,6 +101,7 @@ public class EmployeeDAO implements DAOInterface<Employee>{
             pst.setInt(8, t.getSalary());
             pst.setString(9, t.getNote());
             pst.setString(10, t.getCode());
+//            pst.setString(10, t.getAccountId());
             
             result = pst.executeUpdate();
             System.out.println("Have " + result + " been changed!");
@@ -156,7 +158,8 @@ public class EmployeeDAO implements DAOInterface<Employee>{
                 String position = rs.getString("POSITION");
                 int salary = rs.getInt("SALARY");
                 String notes = rs.getString("NOTES");
-                Employee employee = new Employee(code, name, dateOfBirth, address, email, phoneNumber, dateOfEmployee, position, salary, notes);
+                String accountId = rs.getString("ACCOUNT_ID");
+                Employee employee = new Employee(code, name, dateOfBirth, address, email, phoneNumber, dateOfEmployee, position, salary, notes,accountId);
                 employeesList.add(employee);
             }
             System.out.println("You have done: " + sql);
@@ -168,6 +171,69 @@ public class EmployeeDAO implements DAOInterface<Employee>{
         }
         return employeesList;
     }
+    
+    public static String GetAccountIdEmp(String code) {
+    String accountId = "";
+    try {
+        Connection con = JDBCUtil.getConnection();
+
+        String sql = "SELECT ACCOUNT_ID FROM EMPLOYEE WHERE EMPLOYEE_CODE = ?";
+
+        PreparedStatement pst = con.prepareStatement(sql);
+        pst.setString(1, code); // Sửa từ e.getCode() thành code
+
+        ResultSet rs = pst.executeQuery();
+        System.out.println(rs);
+        System.out.println("You have done: " + sql);
+
+        if (rs.next()) { // Sửa while thành if, vì ta chỉ cần lấy một giá trị accountId
+            accountId = rs.getString("ACCOUNT_ID");
+        }
+        System.out.println(accountId);
+        JDBCUtil.closeConnection(con);
+    } catch (SQLException ex) {
+        ex.printStackTrace();
+        System.out.println("Cannot select by Id Account! Please try again!");
+    }
+    return accountId;
+}
+    
+    public static Employee getEmpFromAccountId(String accountId){
+        Employee emp = null;
+        try {
+            Connection con = JDBCUtil.getConnection();
+            
+            String sql = "SELECT * FROM EMPLOYEE WHERE ACCOUNT_ID = ?";
+
+            PreparedStatement pst = con.prepareStatement(sql);
+            pst.setString(1, accountId);
+            
+            ResultSet rs = pst.executeQuery();
+            System.out.println("You have done: " + sql);
+            
+            while(rs.next()){
+                String code = rs.getString("EMPLOYEE_CODE"); // hoặc rs.getString(number) number ở đây là thứ tự cột
+                String name = rs.getString("EMPLOYEE_NAME");
+                String dateOfBirth = rs.getString("DATE_OF_BIRTH");
+                String address = rs.getString("ADDRESS");
+                String email = rs.getString("EMAIL");
+                String phoneNumber = rs.getString("PHONE_NUMBER");
+                String dateOfEmployee = rs.getString("DATE_OF_EMPLOYMENT");
+                String position = rs.getString("POSITION");
+                int salary = rs.getInt("SALARY");
+                String notes = rs.getString("NOTES");
+                String empAccId = rs.getString("ACCOUNT_ID");
+                emp = new Employee(code, name, dateOfBirth, address, email, phoneNumber, dateOfEmployee, position, salary, notes,empAccId);
+
+            }
+            JDBCUtil.closeConnection(con);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Cannot select by Id! Please try again!");
+        }
+        return emp;
+    }
+
 
     @Override
     public Employee SelectById(Employee t) {
@@ -194,8 +260,9 @@ public class EmployeeDAO implements DAOInterface<Employee>{
                 String position = rs.getString("POSITION");
                 int salary = rs.getInt("SALARY");
                 String notes = rs.getString("NOTES");
-                
-                employee = new Employee(code, name, dateOfBirth, address, email, phoneNumber, dateOfEmployee, position, salary, notes);
+                String accountId = rs.getString("ACCOUNT_ID");
+                employee = new Employee(code, name, dateOfBirth, address, email, phoneNumber, dateOfEmployee, position, salary, notes,accountId);
+
             }
             JDBCUtil.closeConnection(con);
         } catch (Exception e) {
@@ -226,5 +293,6 @@ public class EmployeeDAO implements DAOInterface<Employee>{
         }
         return maxId;
     }
+    
     
 }

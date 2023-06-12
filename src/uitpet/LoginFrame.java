@@ -172,7 +172,7 @@ public class LoginFrame extends javax.swing.JFrame {
         boolean accountCheck = AccountDAO.getInstance().checkLogin(userName, userPass);
         if (accountCheck == true){
             JOptionPane.showMessageDialog(this, "Login successfully!");
-            ManagerForm managerForm = new ManagerForm();
+            ManagerForm managerForm = new ManagerForm(userName);
             managerForm.setVisible(true);
         }
         else {
