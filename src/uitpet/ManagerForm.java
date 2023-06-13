@@ -7,15 +7,23 @@ package uitpet;
 import ClassModel.Account;
 import ClassModel.Customer;
 import ClassModel.Employee;
+import ClassModel.Invoice;
 import ClassModel.Pet;
+import ClassModel.PetDetail;
 import ClassModel.Product;
+import ClassModel.ProductDetail;
 import ClassModel.Service;
+import ClassModel.ServiceDetail;
 import DAOmodel.AccountDAO;
 import DAOmodel.CustomerDAO;
 import DAOmodel.EmployeeDAO;
+import DAOmodel.InvoiceDAO;
 import DAOmodel.PetDAO;
+import DAOmodel.PetDetailDAO;
 import DAOmodel.ProductDAO;
+import DAOmodel.ProductDetailDAO;
 import DAOmodel.ServiceDAO;
+import DAOmodel.ServiceDetailDAO;
 import java.awt.Color;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -27,6 +35,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
+import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -39,10 +48,11 @@ public class ManagerForm extends javax.swing.JFrame {
      * Creates new form ManagerForm
      */
     int state = 1;
-    Employee currentEmp = null;
-    Account currentAcc = null;
+    boolean valid = true;
+    public static Employee currentEmp = null;
+    public static Account currentAcc = null;
     public static ArrayList<Product> productArrayOrigin = ProductDAO.getInstance().SelectAll();
-    public static ArrayList<Product> productArray = ProductDAO.getInstance().SelectAll();
+    public static ArrayList<Product> productArray = ProductDAO.SelectAvble();
     public static ArrayList<Product> productArrayDel = new ArrayList<>();
     public static ArrayList<Pet> petArray = PetDAO.getInstance().SelectAll();
     public static ArrayList<Pet> petArrayDel = new ArrayList<>();
@@ -113,12 +123,12 @@ public class ManagerForm extends javax.swing.JFrame {
         model.insertRow(0, entry);
     }
 
-    public void clearTable( JTable table) {
+    public static void clearTable( JTable table) {
         DefaultTableModel model = (DefaultTableModel) table.getModel(); 
-        int y = table.getRowCount();
-        while (y > 0) {
-            model.removeRow(0);
-        }
+        model.setRowCount(0);
+        productArrayOrigin = ProductDAO.getInstance().SelectAll();
+        productArray = ProductDAO.getInstance().SelectAll();
+        productArrayDel = new ArrayList<>();
     } 
     public boolean existsInTable(JTable table, Object[] entry) {
 
@@ -216,12 +226,42 @@ public class ManagerForm extends javax.swing.JFrame {
         petList.setModel(list);
     }
     
+    public static void updatePetList2() {
+        DefaultListModel list  = new DefaultListModel() ;   
+        ArrayList<Pet> listArray = PetDAO.getInstance().SelectAll();
+//        System.out.println(listArray);s
+        for (Pet p : listArray){
+            list.addElement(p.getType()+" "+p.getName()+" "+p.getNotes());
+        }
+        petList.setModel(list);
+    }
+    
     public static void updateProductList() {
         DefaultListModel list  = new DefaultListModel() ;   
 //        ArrayList<Product> listArray = ProductDAO.getInstance().SelectAll();
 //        System.out.println(listArray);
+//        productArrayOrigin = ProductDAO.getInstance().SelectAll();
+//        productArray = ProductDAO.getInstance().SelectAll();
+//        productArrayDel = new ArrayList<>();
+        productArray = ProductDAO.SelectAvble();
         for (Product p : productArray){
-            list.addElement(p.getProductName() + " : " + p.getQuantity());
+           
+                list.addElement(p.getProductName() + " : " + p.getQuantity());
+        }
+        productList.setModel(list);
+    }
+    
+    public static void updateProductList2() {
+        DefaultListModel list  = new DefaultListModel() ;   
+//        ArrayList<Product> listArray = ProductDAO.getInstance().SelectAll();
+//        System.out.println(listArray);
+//        productArrayOrigin = ProductDAO.getInstance().SelectAll();
+//        productArray = ProductDAO.getInstance().SelectAll();
+//        productArrayDel = new ArrayList<>();
+        
+        for (Product p : productArray){
+           
+                list.addElement(p.getProductName() + " : " + p.getQuantity());
         }
         productList.setModel(list);
     }
@@ -229,7 +269,7 @@ public class ManagerForm extends javax.swing.JFrame {
     public static void updateServiceList() {
         DefaultListModel list  = new DefaultListModel() ;   
         ArrayList<Service> listArray = ServiceDAO.getInstance().SelectAll();
-        System.out.println(listArray);
+        serviceArray = ServiceDAO.getInstance().SelectAll();
         for (Service p : listArray){
             list.addElement(p.getServiceName());
         }
@@ -303,7 +343,226 @@ public class ManagerForm extends javax.swing.JFrame {
         
         sumPrice.setText("Tổng tiền: " + Integer.toString(sum));
     }
+    
+    public static int getSumCost()  {
+        int sum = 0;
+        if (productTable.getRowCount() == 0) {
+            sum = 0;
+        }
+        else {
+            for (int i = 0; i < productTable.getRowCount(); i++) {  
+                sum += Integer.parseInt(productTable.getValueAt(i, 3).toString()) * Integer.parseInt(productTable.getValueAt(i, 4).toString()) ;
+            }
 
+        }
+        return sum;
+    }
+    
+    public static void  resetProductList() {
+        DefaultListModel list  = new DefaultListModel() ;
+        ArrayList<Product> listArray = ProductDAO.getInstance().SelectAll();
+//        System.out.println(listArray);
+        for (Product p : listArray){
+            list.addElement(p.getProductName() + " : " + p.getQuantity());
+        }
+        productList.setModel(list);
+        productArrayOrigin = ProductDAO.getInstance().SelectAll();
+        productArray = ProductDAO.getInstance().SelectAll();
+        productArrayDel = new ArrayList<>();
+    }
+    
+    public static void resetProductTable() {
+        updatePetList();
+        updateServiceList();
+        resetProductList();
+        clearTable(productTable);
+
+    }
+    
+    public static String createInvoice() {
+        String cName = cusName.getText();
+        String cPhone = cusPhone.getText();
+        
+//        Tao id tu dong cho Invoice
+        String maxIdInvoice = InvoiceDAO.getInstance().getMaxIdFromDatabase();
+        if(maxIdInvoice == null){
+            maxIdInvoice = "0";
+        }
+        int newIdInvoice = Integer.parseInt(maxIdInvoice) + 1;
+        String iCode = String.format("%04d", newIdInvoice);
+//        Tao id tu dong cho Customer
+        String maxIdCus = CustomerDAO.getInstance().getMaxIdFromDatabase();
+        if(maxIdCus == null){
+            maxIdCus = "0";
+        }
+        int newIdCus = Integer.parseInt(maxIdCus) + 1;
+        String cCode = String.format("%02d", newIdCus);
+//        Xu ly logic
+        System.out.println(iCode);
+        boolean c = CustomerDAO.isExisted(cName, cPhone);
+        if (c) {
+            Customer n = CustomerDAO.getCustomer(cName, cPhone);
+            cCode = n.getCode();
+            System.out.println("update" + n.getCode());
+            n.setInvoiceCount(n.getInvoiceCount() + 1);
+            int createCus = CustomerDAO.getInstance().update(n);
+        } else {
+            Customer newCus = new Customer();
+            newCus.setCode(cCode);
+            newCus.setName(cName);
+            newCus.setPhoneNumber(cPhone);
+            newCus.setInvoiceCount(1);
+            System.out.println(newCus.getInvoiceCount());
+            int createCus = CustomerDAO.getInstance().insert(newCus);
+        }
+        Invoice i = new Invoice(iCode,dateLable.getText(),getSumCost(),cCode,currentEmp.getCode(),cName,currentEmp.getName(),cPhone);
+        
+        int createIn = InvoiceDAO.getInstance().insert(i);
+        return iCode;
+    }
+    
+    
+    public static void updateProduct(String pid) {
+        int i =0, realquan = 0;
+        for (Product p : productArray){
+            if (p.getProductCode().equals(pid)) {
+                realquan = productArray.get(i).getQuantity();           
+            }
+            i++;
+        }
+        System.out.println("update ne");
+        ProductDAO.updateProductByID(pid, realquan);
+    }
+    
+    public static void createProductDeTail(String iCode, String pCode, String name, int price, int quantity) {
+        
+        String maxIdPD = ProductDetailDAO.getInstance().getMaxIdFromDatabase();
+//      
+       
+        if(maxIdPD == null){
+            maxIdPD = "0";
+        }
+        
+        int newIdInvoice = Integer.parseInt(maxIdPD) + 1;
+        String pdCode = String.format("%04d", newIdInvoice);
+        
+        ProductDetail pd = new ProductDetail(pdCode,iCode,pCode,name,price,quantity);
+        System.out.println("Tao ne" + pd.getDetailCode());
+        int createPD = ProductDetailDAO.getInstance().insert(pd);
+        updateProduct(pCode);
+    }
+    
+    public static void createPetDeTail(String iCode, String pCode, String name, int price, int quantity) {
+        
+        String maxIdPet = PetDetailDAO.getInstance().getMaxIdFromDatabase();
+        if(maxIdPet == null){
+            maxIdPet= "0";
+        }
+        
+        int newIdInvoice = Integer.parseInt(maxIdPet) + 1;
+        String pdCode = String.format("%04d", newIdInvoice);
+        
+        PetDetail pd = new PetDetail(pdCode,iCode,pCode,name,price,quantity);
+        System.out.println("Tao ne" + pd.getDetailId());
+        int createPD = PetDetailDAO.getInstance().insert(pd);
+        Pet pet = PetDAO.selectByID(pCode);
+        System.out.println(pet);
+        int deletePet = PetDAO.getInstance().delete(pet);
+        
+    }
+    
+    public static void createServiceDeTail(String iCode, String pCode, String name, int price, int quantity) {
+        
+        String maxIdService = ServiceDetailDAO.getInstance().getMaxIdFromDatabase();
+        if(maxIdService == null){
+            maxIdService= "0";
+        }
+        
+        int newIdInvoice = Integer.parseInt(maxIdService) + 1;
+        String pdCode = String.format("%04d", newIdInvoice);
+        ServiceDetail pd = new ServiceDetail(pdCode,iCode,pCode,name,price,quantity);
+        System.out.println("Tao ne" + pd.getDetailId());
+        int createPD = ServiceDetailDAO.getInstance().insert(pd);
+    }
+    
+    public static void updateProductTable() {
+        DefaultTableModel model = (DefaultTableModel) productTable.getModel();
+        model.setRowCount(0);
+        updateProductList();
+        updateCusTable();
+        updatePetTable();
+        updatePetList();
+        updateEmpTable();
+        updateServiceTable();
+        updateServiceList();
+        updateProductListTable();
+        setSumCost();   
+    }
+    
+    public static void updateInvoiceListTable() {
+        ArrayList<Invoice> invoiceArray = InvoiceDAO.getInstance().SelectAll();
+        DefaultTableModel model = (DefaultTableModel) invoiceListTable.getModel();
+        for (Invoice p : invoiceArray) {
+            model.addRow(new Object[] { p.getInvoiceCode(),p.getEmpName(),p.getCusName(),p.getDateCreate(),p.getTotal() });
+        }
+        invoiceListTable.setModel(model);
+    }
+    
+    public static void updateCustomerFavListTable() {
+        ArrayList<Customer> customerArray = CustomerDAO.SelectAllFav();
+        DefaultTableModel model = (DefaultTableModel) cusFav.getModel();
+        model.setRowCount(0);
+        for (Customer p : customerArray) {
+            model.addRow(new Object[] {p.getName(),p.getPhoneNumber(),p.getAddress(),p.getEmail(),p.getInvoiceCount()});
+        }
+        cusFav.setModel(model);
+    }
+    
+    public static void updatePetListTable() {
+        ArrayList<PetDetail> pdArray = PetDetailDAO.getInstance().SelectAll();
+        ArrayList<Pet> pArray = PetDAO.getInstance().SelectAll();
+        DefaultTableModel model = (DefaultTableModel) petTab.getModel();
+
+        for (PetDetail p : pdArray) {
+            model.addRow(new Object[] {p.getPetCode(),p.getPetName(),p.getPrice()});
+        }
+        for (Pet p : pArray) {
+            model.addRow(new Object[] {p.getCode(),p.getName(),""});
+        }
+        petTab.setModel(model);
+    }
+
+
+    public static void updateProductStatisticListTable() {
+        ArrayList<Product> productArray = ProductDAO.getInstance().SelectAll();
+        DefaultTableModel model = (DefaultTableModel) productStatistic.getModel();
+        for (Product p : productArray) {
+            int stock = p.getQuantity();
+            int sold = ProductDAO.getSoldCount(p.getProductCode());
+            model.addRow(new Object[] {p.getProductCode(),p.getProductName(), stock + sold,stock, sold,ProductDAO.getRevenue(p.getProductCode())});
+        }
+        productStatistic.setModel(model);
+    }
+    
+    public static void updateServiceStatisticListTable() {
+        ArrayList<Service> arr = ServiceDAO.getInstance().SelectAll();
+        System.out.println(arr);
+        DefaultTableModel model = (DefaultTableModel) serviceS.getModel();
+        model.setRowCount(0);
+        for (Service p : arr) {
+            int quan = ServiceDAO.getCount(p.getServiceCode());
+            int re = ServiceDAO.getRevenue(p.getServiceCode());
+            model.addRow(new Object[] {p.getServiceCode(),p.getServiceName(),quan,re});
+        }
+        serviceS.setModel(model);
+    }
+    
+    public static void  updateStatistic() {
+        updateServiceStatisticListTable();
+        updateProductStatisticListTable();
+        updateCustomerFavListTable();
+        updateInvoiceListTable();
+    }
     
     public ManagerForm() {
         initComponents();
@@ -316,7 +575,12 @@ public class ManagerForm extends javax.swing.JFrame {
         updateProductList();
         updateServiceList();
         updateCusTable();
-        
+        empBtn.setVisible(false);
+        updateInvoiceListTable();
+        updateCustomerFavListTable();
+        updateProductStatisticListTable();
+        updateServiceStatisticListTable();
+        updatePetListTable();
     } 
     
     
@@ -337,7 +601,18 @@ public class ManagerForm extends javax.swing.JFrame {
         updateProductList();
         updateServiceList();
         updateCusTable();
-        
+        String role = currentAcc.getAccountRole().toString();
+        updateInvoiceListTable();
+        updateCustomerFavListTable();
+        System.out.println(currentAcc.getAccountRole().toString().length());
+        System.out.println("Nhân viên");
+        System.out.println(currentAcc.getAccountRole().toString().equals("Nhân viên"));
+        if (currentAcc.getAccountRole().equals("Nhân viên")) {
+            empBtn.setVisible(false);
+        }
+        updateProductStatisticListTable();
+        updateServiceStatisticListTable();
+        updatePetListTable();
     } 
 
     /**
@@ -371,9 +646,9 @@ public class ManagerForm extends javax.swing.JFrame {
         jLabel6 = new javax.swing.JLabel();
         dateLable = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
+        cusPhone = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
-        jTextField2 = new javax.swing.JTextField();
+        cusName = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
         jLabel10 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -396,8 +671,9 @@ public class ManagerForm extends javax.swing.JFrame {
         serviceLayout = new javax.swing.JPanel();
         jPanel10 = new javax.swing.JPanel();
         jLabel12 = new javax.swing.JLabel();
-        jTextField3 = new javax.swing.JTextField();
+        searchService = new javax.swing.JTextField();
         jLabel16 = new javax.swing.JLabel();
+        searchBtn = new javax.swing.JButton();
         jPanel11 = new javax.swing.JPanel();
         jScrollPane5 = new javax.swing.JScrollPane();
         serviceTable = new javax.swing.JTable();
@@ -410,6 +686,10 @@ public class ManagerForm extends javax.swing.JFrame {
         jPanel27 = new javax.swing.JPanel();
         jScrollPane7 = new javax.swing.JScrollPane();
         serviceTypeTable = new javax.swing.JTable();
+        jPanel30 = new javax.swing.JPanel();
+        jLabel20 = new javax.swing.JLabel();
+        searchBtnPetMan = new javax.swing.JButton();
+        searchPetMan = new javax.swing.JTextField();
         jPanel28 = new javax.swing.JPanel();
         jButton25 = new javax.swing.JButton();
         jButton26 = new javax.swing.JButton();
@@ -423,6 +703,8 @@ public class ManagerForm extends javax.swing.JFrame {
         jButton9 = new javax.swing.JButton();
         jPanel15 = new javax.swing.JPanel();
         jLabel17 = new javax.swing.JLabel();
+        searchBtnProduct = new javax.swing.JButton();
+        productSearchMan = new javax.swing.JTextField();
         customerLayout = new javax.swing.JPanel();
         jScrollPane9 = new javax.swing.JScrollPane();
         customerTable = new javax.swing.JTable();
@@ -432,34 +714,50 @@ public class ManagerForm extends javax.swing.JFrame {
         jButton12 = new javax.swing.JButton();
         jPanel17 = new javax.swing.JPanel();
         jLabel18 = new javax.swing.JLabel();
+        searchCusBtnMan = new javax.swing.JButton();
+        customerSearchMan = new javax.swing.JTextField();
         statisticLayout = new javax.swing.JPanel();
-        jTabbedPane1 = new javax.swing.JTabbedPane();
+        searchSer = new javax.swing.JTabbedPane();
         jPanel20 = new javax.swing.JPanel();
         jScrollPane10 = new javax.swing.JScrollPane();
-        jTable5 = new javax.swing.JTable();
+        productStatistic = new javax.swing.JTable();
+        jPanel21 = new javax.swing.JPanel();
+        searchProduct = new javax.swing.JTextField();
+        searchProBtn = new javax.swing.JButton();
+        jPanel9 = new javax.swing.JPanel();
+        jScrollPane13 = new javax.swing.JScrollPane();
+        serviceS = new javax.swing.JTable();
+        jPanel23 = new javax.swing.JPanel();
+        searchStaField = new javax.swing.JTextField();
+        searchSerBtn = new javax.swing.JButton();
+        petS = new javax.swing.JPanel();
+        jScrollPane15 = new javax.swing.JScrollPane();
+        petTab = new javax.swing.JTable();
+        jPanel29 = new javax.swing.JPanel();
+        searchPetBtn = new javax.swing.JButton();
+        searchPet = new javax.swing.JTextField();
         jPanel18 = new javax.swing.JPanel();
         jScrollPane11 = new javax.swing.JScrollPane();
-        jTable6 = new javax.swing.JTable();
+        invoiceListTable = new javax.swing.JTable();
         jPanel22 = new javax.swing.JPanel();
-        jTextField6 = new javax.swing.JTextField();
+        searchInvoice = new javax.swing.JTextField();
+        searchInvoiceBtn = new javax.swing.JButton();
         jPanel19 = new javax.swing.JPanel();
         jScrollPane12 = new javax.swing.JScrollPane();
-        jTable7 = new javax.swing.JTable();
-        jPanel21 = new javax.swing.JPanel();
-        jScrollPane13 = new javax.swing.JScrollPane();
-        jTable8 = new javax.swing.JTable();
-        jPanel23 = new javax.swing.JPanel();
-        jComboBox2 = new javax.swing.JComboBox<>();
+        cusFav = new javax.swing.JTable();
         empLayout = new javax.swing.JPanel();
         jScrollPane14 = new javax.swing.JScrollPane();
         empTable = new javax.swing.JTable();
         jPanel25 = new javax.swing.JPanel();
         jLabel19 = new javax.swing.JLabel();
+        searchBtnEmpMan = new javax.swing.JButton();
+        empSearchMan = new javax.swing.JTextField();
         jPanel26 = new javax.swing.JPanel();
         jButton13 = new javax.swing.JButton();
         jButton14 = new javax.swing.JButton();
         jButton15 = new javax.swing.JButton();
         nameEmp = new javax.swing.JLabel();
+        jButton28 = new javax.swing.JButton();
 
         javax.swing.GroupLayout jPanel24Layout = new javax.swing.GroupLayout(jPanel24);
         jPanel24.setLayout(jPanel24Layout);
@@ -618,18 +916,18 @@ public class ManagerForm extends javax.swing.JFrame {
         jLabel9.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel9.setText("SĐT khách hàng");
 
-        jTextField1.addActionListener(new java.awt.event.ActionListener() {
+        cusPhone.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField1ActionPerformed(evt);
+                cusPhoneActionPerformed(evt);
             }
         });
 
         jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel3.setText("Tên khách hàng");
 
-        jTextField2.addActionListener(new java.awt.event.ActionListener() {
+        cusName.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField2ActionPerformed(evt);
+                cusNameActionPerformed(evt);
             }
         });
 
@@ -690,7 +988,7 @@ public class ManagerForm extends javax.swing.JFrame {
                             .addGroup(jPanel7Layout.createSequentialGroup()
                                 .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                     .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, 226, Short.MAX_VALUE)
-                                    .addComponent(jTextField1)
+                                    .addComponent(cusPhone)
                                     .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                     .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                     .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -700,7 +998,7 @@ public class ManagerForm extends javax.swing.JFrame {
                                     .addComponent(jLabel10, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                     .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 260, Short.MAX_VALUE)
                                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 234, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 233, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(cusName, javax.swing.GroupLayout.PREFERRED_SIZE, 233, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(dateLable, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                     .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, 260, Short.MAX_VALUE)))
                             .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel7Layout.createSequentialGroup()
@@ -725,14 +1023,14 @@ public class ManagerForm extends javax.swing.JFrame {
                     .addComponent(jLabel3))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(cusPhone, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cusName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel10))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane4)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 195, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -806,15 +1104,16 @@ public class ManagerForm extends javax.swing.JFrame {
             .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
             .addGroup(jPanel8Layout.createSequentialGroup()
                 .addGap(30, 30, 30)
-                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(sumPrice, javax.swing.GroupLayout.PREFERRED_SIZE, 275, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(jPanel8Layout.createSequentialGroup()
-                        .addComponent(jButton19, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(jButton21)
-                        .addGap(32, 32, 32)
-                        .addComponent(jButton20, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addComponent(jButton19, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jButton21)
+                .addGap(32, 32, 32)
+                .addComponent(jButton20, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel8Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(sumPrice, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
         jPanel8Layout.setVerticalGroup(
             jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -871,17 +1170,23 @@ public class ManagerForm extends javax.swing.JFrame {
 
         jPanel10.setBackground(new java.awt.Color(255, 204, 204));
 
-        jLabel12.setText("iconserach");
+        jLabel12.setText("Search");
 
-        jTextField3.setText("Search...");
-        jTextField3.addActionListener(new java.awt.event.ActionListener() {
+        searchService.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField3ActionPerformed(evt);
+                searchServiceActionPerformed(evt);
             }
         });
 
         jLabel16.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabel16.setText("Đăng kí dịch vụ");
+        jLabel16.setText("Quản lý dịch vụ");
+
+        searchBtn.setText("Search");
+        searchBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                searchBtnActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel10Layout = new javax.swing.GroupLayout(jPanel10);
         jPanel10.setLayout(jPanel10Layout);
@@ -893,8 +1198,10 @@ public class ManagerForm extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, 246, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addComponent(searchService, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(3, 3, 3)
+                .addComponent(searchBtn)
+                .addGap(26, 26, 26))
         );
         jPanel10Layout.setVerticalGroup(
             jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -902,8 +1209,9 @@ public class ManagerForm extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addGroup(jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel12)
-                    .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel16))
+                    .addComponent(searchService, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel16)
+                    .addComponent(searchBtn))
                 .addContainerGap(14, Short.MAX_VALUE))
         );
 
@@ -992,14 +1300,16 @@ public class ManagerForm extends javax.swing.JFrame {
             .addGroup(serviceLayoutLayout.createSequentialGroup()
                 .addComponent(jPanel10, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel11, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(jPanel11, javax.swing.GroupLayout.DEFAULT_SIZE, 629, Short.MAX_VALUE))
         );
 
         jPanel4.add(serviceLayout, "card3");
 
-        petLayout.setLayout(new java.awt.GridLayout(1, 2));
+        petLayout.setLayout(new java.awt.BorderLayout());
 
         jPanel12.setLayout(new java.awt.BorderLayout());
+
+        jPanel27.setLayout(new java.awt.BorderLayout());
 
         serviceTypeTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -1019,18 +1329,50 @@ public class ManagerForm extends javax.swing.JFrame {
         });
         jScrollPane7.setViewportView(serviceTypeTable);
 
-        javax.swing.GroupLayout jPanel27Layout = new javax.swing.GroupLayout(jPanel27);
-        jPanel27.setLayout(jPanel27Layout);
-        jPanel27Layout.setHorizontalGroup(
-            jPanel27Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane7, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 913, Short.MAX_VALUE)
+        jPanel27.add(jScrollPane7, java.awt.BorderLayout.CENTER);
+
+        jPanel30.setPreferredSize(new java.awt.Dimension(913, 70));
+
+        jLabel20.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        jLabel20.setText("Quản lý thú cưng");
+
+        searchBtnPetMan.setText("Search");
+        searchBtnPetMan.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                searchBtnPetManActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel30Layout = new javax.swing.GroupLayout(jPanel30);
+        jPanel30.setLayout(jPanel30Layout);
+        jPanel30Layout.setHorizontalGroup(
+            jPanel30Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel30Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel20, javax.swing.GroupLayout.PREFERRED_SIZE, 169, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 493, Short.MAX_VALUE)
+                .addComponent(searchPetMan, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(searchBtnPetMan)
+                .addContainerGap())
         );
-        jPanel27Layout.setVerticalGroup(
-            jPanel27Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane7, javax.swing.GroupLayout.DEFAULT_SIZE, 608, Short.MAX_VALUE)
+        jPanel30Layout.setVerticalGroup(
+            jPanel30Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel30Layout.createSequentialGroup()
+                .addGap(21, 21, 21)
+                .addGroup(jPanel30Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(jPanel30Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(searchBtnPetMan)
+                        .addComponent(searchPetMan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jLabel20))
+                .addContainerGap(24, Short.MAX_VALUE))
         );
 
+        jPanel27.add(jPanel30, java.awt.BorderLayout.PAGE_START);
+
         jPanel12.add(jPanel27, java.awt.BorderLayout.PAGE_START);
+
+        jPanel28.setBackground(new java.awt.Color(255, 255, 255));
 
         jButton25.setBackground(new java.awt.Color(153, 255, 153));
         jButton25.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
@@ -1067,7 +1409,7 @@ public class ManagerForm extends javax.swing.JFrame {
         jPanel28Layout.setHorizontalGroup(
             jPanel28Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel28Layout.createSequentialGroup()
-                .addContainerGap(487, Short.MAX_VALUE)
+                .addContainerGap(469, Short.MAX_VALUE)
                 .addComponent(jButton26, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(34, 34, 34)
                 .addComponent(jButton27, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1088,7 +1430,7 @@ public class ManagerForm extends javax.swing.JFrame {
 
         jPanel12.add(jPanel28, java.awt.BorderLayout.PAGE_END);
 
-        petLayout.add(jPanel12);
+        petLayout.add(jPanel12, java.awt.BorderLayout.CENTER);
 
         jPanel4.add(petLayout, "card4");
 
@@ -1171,6 +1513,13 @@ public class ManagerForm extends javax.swing.JFrame {
         jLabel17.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel17.setText("DANH SÁCH SẢN PHẨM");
 
+        searchBtnProduct.setText("Search");
+        searchBtnProduct.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                searchBtnProductActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel15Layout = new javax.swing.GroupLayout(jPanel15);
         jPanel15.setLayout(jPanel15Layout);
         jPanel15Layout.setHorizontalGroup(
@@ -1178,13 +1527,21 @@ public class ManagerForm extends javax.swing.JFrame {
             .addGroup(jPanel15Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel17, javax.swing.GroupLayout.PREFERRED_SIZE, 236, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(665, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 359, Short.MAX_VALUE)
+                .addComponent(productSearchMan, javax.swing.GroupLayout.PREFERRED_SIZE, 197, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(28, 28, 28)
+                .addComponent(searchBtnProduct)
+                .addContainerGap())
         );
         jPanel15Layout.setVerticalGroup(
             jPanel15Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel15Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel17, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel15Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel15Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(searchBtnProduct)
+                        .addComponent(productSearchMan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jLabel17, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(15, Short.MAX_VALUE))
         );
 
@@ -1271,6 +1628,13 @@ public class ManagerForm extends javax.swing.JFrame {
         jLabel18.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel18.setText("DANH SÁCH KHÁCH HÀNG");
 
+        searchCusBtnMan.setText("Search");
+        searchCusBtnMan.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                searchCusBtnManActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel17Layout = new javax.swing.GroupLayout(jPanel17);
         jPanel17.setLayout(jPanel17Layout);
         jPanel17Layout.setHorizontalGroup(
@@ -1278,13 +1642,20 @@ public class ManagerForm extends javax.swing.JFrame {
             .addGroup(jPanel17Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel18, javax.swing.GroupLayout.PREFERRED_SIZE, 261, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(640, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 291, Short.MAX_VALUE)
+                .addComponent(customerSearchMan, javax.swing.GroupLayout.PREFERRED_SIZE, 223, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(45, 45, 45)
+                .addComponent(searchCusBtnMan)
+                .addContainerGap())
         );
         jPanel17Layout.setVerticalGroup(
             jPanel17Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel17Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel18, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel17Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel18, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(searchCusBtnMan)
+                    .addComponent(customerSearchMan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(14, Short.MAX_VALUE))
         );
 
@@ -1296,108 +1667,71 @@ public class ManagerForm extends javax.swing.JFrame {
 
         jPanel20.setLayout(new java.awt.BorderLayout());
 
-        jTable5.setModel(new javax.swing.table.DefaultTableModel(
+        productStatistic.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+
             },
             new String [] {
-                "Tên sản phẩm", "Tổng số lượng", "Số lượng còn lại", "Số lượng đã bán"
+                "Mã sản phẩm", "Tên sản phẩm", "Tổng số lượng", "Số lượng còn lại", "Số lượng đã bán", "Tổng doanh thu"
             }
         ));
-        jScrollPane10.setViewportView(jTable5);
+        jScrollPane10.setViewportView(productStatistic);
 
         jPanel20.add(jScrollPane10, java.awt.BorderLayout.CENTER);
 
-        jTabbedPane1.addTab("Kho hàng", jPanel20);
+        jPanel21.setPreferredSize(new java.awt.Dimension(908, 30));
 
-        jPanel18.setLayout(new java.awt.BorderLayout());
-
-        jTable6.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null}
-            },
-            new String [] {
-                "Mã hóa đơn", "Người tạo", "Tên khách hàng", "Ngày tạo", "Tổng tiền"
-            }
-        ));
-        jScrollPane11.setViewportView(jTable6);
-
-        jPanel18.add(jScrollPane11, java.awt.BorderLayout.CENTER);
-
-        jTextField6.setText("Tìm kiếm");
-        jTextField6.addActionListener(new java.awt.event.ActionListener() {
+        searchProBtn.setText("Search");
+        searchProBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField6ActionPerformed(evt);
+                searchProBtnActionPerformed(evt);
             }
         });
 
-        javax.swing.GroupLayout jPanel22Layout = new javax.swing.GroupLayout(jPanel22);
-        jPanel22.setLayout(jPanel22Layout);
-        jPanel22Layout.setHorizontalGroup(
-            jPanel22Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel22Layout.createSequentialGroup()
-                .addGap(15, 15, 15)
-                .addComponent(jTextField6, javax.swing.GroupLayout.PREFERRED_SIZE, 419, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(474, Short.MAX_VALUE))
+        javax.swing.GroupLayout jPanel21Layout = new javax.swing.GroupLayout(jPanel21);
+        jPanel21.setLayout(jPanel21Layout);
+        jPanel21Layout.setHorizontalGroup(
+            jPanel21Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel21Layout.createSequentialGroup()
+                .addContainerGap(642, Short.MAX_VALUE)
+                .addComponent(searchProduct, javax.swing.GroupLayout.PREFERRED_SIZE, 162, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(searchProBtn)
+                .addGap(23, 23, 23))
         );
-        jPanel22Layout.setVerticalGroup(
-            jPanel22Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel22Layout.createSequentialGroup()
-                .addGap(16, 16, 16)
-                .addComponent(jTextField6, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(23, Short.MAX_VALUE))
+        jPanel21Layout.setVerticalGroup(
+            jPanel21Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel21Layout.createSequentialGroup()
+                .addGroup(jPanel21Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(searchProduct, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(searchProBtn))
+                .addGap(0, 5, Short.MAX_VALUE))
         );
 
-        jPanel18.add(jPanel22, java.awt.BorderLayout.PAGE_START);
+        jPanel20.add(jPanel21, java.awt.BorderLayout.PAGE_START);
 
-        jTabbedPane1.addTab("Hóa đơn", jPanel18);
+        searchSer.addTab("Sản phẩm", jPanel20);
 
-        jPanel19.setLayout(new java.awt.BorderLayout());
+        jPanel9.setLayout(new java.awt.BorderLayout());
 
-        jTable7.setModel(new javax.swing.table.DefaultTableModel(
+        serviceS.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+
             },
             new String [] {
-                "Tên khách hàng", "Số điện thoại", "Địa chỉ", "Tổng hóa đơn"
+                "Mã dịch vụ", "Tên dịch vụ", "Đã sử dụng", "Tổng doanh thu"
             }
         ));
-        jScrollPane12.setViewportView(jTable7);
+        jScrollPane13.setViewportView(serviceS);
 
-        jPanel19.add(jScrollPane12, java.awt.BorderLayout.CENTER);
+        jPanel9.add(jScrollPane13, java.awt.BorderLayout.CENTER);
 
-        jTabbedPane1.addTab("Khách hàng quen thuộc", jPanel19);
+        jPanel23.setPreferredSize(new java.awt.Dimension(908, 30));
 
-        jPanel21.setLayout(new java.awt.BorderLayout());
-
-        jTable8.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null}
-            },
-            new String [] {
-                "Thời gian", "Tổng hóa đơn", "Tổng doanh thu", "Doanh thu cao nhất", "Doanh thu thấp nhất", "Doanh thu trung bình"
-            }
-        ));
-        jScrollPane13.setViewportView(jTable8);
-
-        jPanel21.add(jScrollPane13, java.awt.BorderLayout.CENTER);
-
-        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Tất cả", "Tháng", "Năm", " " }));
-        jComboBox2.addActionListener(new java.awt.event.ActionListener() {
+        searchSerBtn.setText("Search");
+        searchSerBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jComboBox2ActionPerformed(evt);
+                searchSerBtnActionPerformed(evt);
             }
         });
 
@@ -1405,24 +1739,145 @@ public class ManagerForm extends javax.swing.JFrame {
         jPanel23.setLayout(jPanel23Layout);
         jPanel23Layout.setHorizontalGroup(
             jPanel23Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel23Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(775, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel23Layout.createSequentialGroup()
+                .addContainerGap(656, Short.MAX_VALUE)
+                .addComponent(searchStaField, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(26, 26, 26)
+                .addComponent(searchSerBtn)
+                .addContainerGap())
         );
         jPanel23Layout.setVerticalGroup(
             jPanel23Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel23Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(jPanel23Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(searchStaField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(searchSerBtn))
+                .addGap(0, 5, Short.MAX_VALUE))
         );
 
-        jPanel21.add(jPanel23, java.awt.BorderLayout.PAGE_START);
+        jPanel9.add(jPanel23, java.awt.BorderLayout.PAGE_START);
 
-        jTabbedPane1.addTab("Doanh thu", jPanel21);
+        searchSer.addTab("Dịch vụ", jPanel9);
 
-        statisticLayout.add(jTabbedPane1, java.awt.BorderLayout.CENTER);
+        petS.setLayout(new java.awt.BorderLayout());
+
+        petTab.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Mã thú cưng", "Tên thú cưng", "Doanh thu"
+            }
+        ));
+        jScrollPane15.setViewportView(petTab);
+
+        petS.add(jScrollPane15, java.awt.BorderLayout.CENTER);
+
+        jPanel29.setPreferredSize(new java.awt.Dimension(908, 30));
+
+        searchPetBtn.setText("Search");
+        searchPetBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                searchPetBtnActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel29Layout = new javax.swing.GroupLayout(jPanel29);
+        jPanel29.setLayout(jPanel29Layout);
+        jPanel29Layout.setHorizontalGroup(
+            jPanel29Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel29Layout.createSequentialGroup()
+                .addGap(0, 668, Short.MAX_VALUE)
+                .addComponent(searchPet, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(searchPetBtn))
+        );
+        jPanel29Layout.setVerticalGroup(
+            jPanel29Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel29Layout.createSequentialGroup()
+                .addGroup(jPanel29Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(searchPetBtn)
+                    .addComponent(searchPet, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(0, 5, Short.MAX_VALUE))
+        );
+
+        petS.add(jPanel29, java.awt.BorderLayout.PAGE_START);
+
+        searchSer.addTab("Thú cưng", petS);
+
+        jPanel18.setLayout(new java.awt.BorderLayout());
+
+        invoiceListTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Mã hóa đơn", "Người tạo", "Tên khách hàng", "Ngày tạo", "Tổng tiền"
+            }
+        ));
+        jScrollPane11.setViewportView(invoiceListTable);
+
+        jPanel18.add(jScrollPane11, java.awt.BorderLayout.CENTER);
+
+        searchInvoice.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                searchInvoiceActionPerformed(evt);
+            }
+        });
+
+        searchInvoiceBtn.setText("Search");
+        searchInvoiceBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                searchInvoiceBtnActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel22Layout = new javax.swing.GroupLayout(jPanel22);
+        jPanel22.setLayout(jPanel22Layout);
+        jPanel22Layout.setHorizontalGroup(
+            jPanel22Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel22Layout.createSequentialGroup()
+                .addContainerGap(611, Short.MAX_VALUE)
+                .addComponent(searchInvoice, javax.swing.GroupLayout.PREFERRED_SIZE, 194, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(searchInvoiceBtn)
+                .addGap(16, 16, 16))
+        );
+        jPanel22Layout.setVerticalGroup(
+            jPanel22Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel22Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel22Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(searchInvoice, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(searchInvoiceBtn))
+                .addContainerGap(17, Short.MAX_VALUE))
+        );
+
+        jPanel18.add(jPanel22, java.awt.BorderLayout.PAGE_START);
+
+        searchSer.addTab("Hóa đơn", jPanel18);
+
+        jPanel19.setLayout(new java.awt.BorderLayout());
+
+        cusFav.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Tên khách hàng", "Số điện thoại", "Địa chỉ", "Email", "Tổng hóa đơn"
+            }
+        ));
+        jScrollPane12.setViewportView(cusFav);
+        if (cusFav.getColumnModel().getColumnCount() > 0) {
+            cusFav.getColumnModel().getColumn(1).setResizable(false);
+            cusFav.getColumnModel().getColumn(3).setResizable(false);
+        }
+
+        jPanel19.add(jScrollPane12, java.awt.BorderLayout.CENTER);
+
+        searchSer.addTab("Khách hàng quen thuộc", jPanel19);
+
+        statisticLayout.add(searchSer, java.awt.BorderLayout.PAGE_START);
 
         jPanel4.add(statisticLayout, "card7");
 
@@ -1452,6 +1907,13 @@ public class ManagerForm extends javax.swing.JFrame {
         jLabel19.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel19.setText("QUẢN LÝ NHÂN VIÊN");
 
+        searchBtnEmpMan.setText("Search");
+        searchBtnEmpMan.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                searchBtnEmpManActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel25Layout = new javax.swing.GroupLayout(jPanel25);
         jPanel25.setLayout(jPanel25Layout);
         jPanel25Layout.setHorizontalGroup(
@@ -1459,13 +1921,19 @@ public class ManagerForm extends javax.swing.JFrame {
             .addGroup(jPanel25Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel19, javax.swing.GroupLayout.PREFERRED_SIZE, 248, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(653, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 417, Short.MAX_VALUE)
+                .addComponent(empSearchMan, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(27, 27, 27)
+                .addComponent(searchBtnEmpMan))
         );
         jPanel25Layout.setVerticalGroup(
             jPanel25Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel25Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel19, javax.swing.GroupLayout.DEFAULT_SIZE, 37, Short.MAX_VALUE)
+                .addGroup(jPanel25Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel19, javax.swing.GroupLayout.DEFAULT_SIZE, 37, Short.MAX_VALUE)
+                    .addComponent(searchBtnEmpMan)
+                    .addComponent(empSearchMan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
 
@@ -1535,19 +2003,35 @@ public class ManagerForm extends javax.swing.JFrame {
         nameEmp.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         nameEmp.setText("Nguyễn Lê Khang");
 
+        jButton28.setBackground(new java.awt.Color(153, 255, 153));
+        jButton28.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
+        jButton28.setForeground(new java.awt.Color(102, 0, 51));
+        jButton28.setText("Đăng xuất");
+        jButton28.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton28ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(nameEmp, javax.swing.GroupLayout.DEFAULT_SIZE, 224, Short.MAX_VALUE)
-                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(nameEmp, javax.swing.GroupLayout.DEFAULT_SIZE, 224, Short.MAX_VALUE)
+                            .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                .addContainerGap(31, Short.MAX_VALUE)
+                                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 0, Short.MAX_VALUE)))
+                        .addGap(18, 18, 18))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addContainerGap(32, Short.MAX_VALUE)
-                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addGap(18, 18, 18)
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(jButton28, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(55, 55, 55)))
                 .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, 917, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -1557,9 +2041,11 @@ public class ManagerForm extends javax.swing.JFrame {
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(nameEmp, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 59, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 55, Short.MAX_VALUE)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 299, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(160, 160, 160))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButton28, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(97, 97, 97))
             .addComponent(jPanel4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
         );
 
@@ -1631,25 +2117,18 @@ public class ManagerForm extends javax.swing.JFrame {
         empLayout.setVisible(true);
     }//GEN-LAST:event_empBtnMouseClicked
 
-    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
+    private void cusPhoneActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cusPhoneActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField1ActionPerformed
+    }//GEN-LAST:event_cusPhoneActionPerformed
 
-    private void jTextField2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField2ActionPerformed
+    private void cusNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cusNameActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField2ActionPerformed
+    }//GEN-LAST:event_cusNameActionPerformed
 
-    private void jTextField3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField3ActionPerformed
+    private void searchServiceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchServiceActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField3ActionPerformed
-
-    private void jTextField6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField6ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField6ActionPerformed
-
-    private void jComboBox2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox2ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jComboBox2ActionPerformed
+        
+    }//GEN-LAST:event_searchServiceActionPerformed
 
     private void jButton13ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton13ActionPerformed
         // TODO add your handling code here:
@@ -1684,9 +2163,9 @@ public class ManagerForm extends javax.swing.JFrame {
         } else {
             productArray.set(index,p);
         }
-        updateProductList();
+        updateProductList2();
         if (productTable.getRowCount() == 0) {
-            model.insertRow(0,new Object[] { "Sản phẩm",p.getProductCode(),p.getProductName(),1,p.getImportPrice() });
+            model.insertRow(0,new Object[] { "Sản phẩm",p.getProductCode(),p.getProductName(),1,p.getProductPrice() });
         }
         else {
             for (int i = 0; i < productTable.getRowCount(); i++) {  
@@ -1699,18 +2178,67 @@ public class ManagerForm extends javax.swing.JFrame {
                     break;
                 } 
             }
-            if (!isExisted) model.insertRow(0,new Object[] { "Sản phẩm",p.getProductCode(),p.getProductName(),1,p.getImportPrice() });
+            if (!isExisted) model.insertRow(0,new Object[] { "Sản phẩm",p.getProductCode(),p.getProductName(),1,p.getProductPrice() });
         }
         setSumCost();
     }//GEN-LAST:event_productListMouseClicked
 
     private void jButton19ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton19ActionPerformed
         // TODO add your handling code here:
-        clearTable(productTable);
+        productArrayOrigin = ProductDAO.getInstance().SelectAll();
+    productArray = ProductDAO.SelectAvble();
+    productArrayDel = new ArrayList<>();
+    petArray = PetDAO.getInstance().SelectAll();
+    petArrayDel = new ArrayList<>();
+    serviceArray = ServiceDAO.getInstance().SelectAll();
+        updateProductTable();
     }//GEN-LAST:event_jButton19ActionPerformed
 
     private void jButton21ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton21ActionPerformed
         // TODO add your handling code here:
+        StringBuilder sb = new StringBuilder();
+        String cName = cusName.getText();
+        String cPhone = cusPhone.getText();
+        if (cName.equals("")) {
+            sb.append("Ten khach hang trong!\n");
+            valid = false;
+        }
+        if (cPhone.equals("")) {
+            sb.append("SDT khach hang trong!\n");
+            valid = false;
+        }
+        if (sb.length() > 0){
+                    SwingUtilities.invokeLater(() -> {
+            JOptionPane.showMessageDialog(this, sb.toString(), "Invalidation", JOptionPane.ERROR_MESSAGE);
+                    
+
+                    });
+        }
+        
+        if (valid) {
+
+            String iCode = createInvoice();
+            int n= productTable.getRowCount();
+            for (int i = 0; i < n; i++) {
+                String pCode = productTable.getValueAt(i, 1).toString();
+                String pName = productTable.getValueAt(i, 2).toString();
+                int quan = (int)productTable.getValueAt(i, 3);
+                int price = (int)productTable.getValueAt(i, 4);
+                if (productTable.getValueAt(i, 0).equals("Sản phẩm")) {
+                    createProductDeTail(iCode, pCode, pName, price, quan);
+                }
+                if (productTable.getValueAt(i, 0).equals("Thú cưng")){
+                    createPetDeTail(iCode, pCode, pName, price, quan);
+                }
+                if (productTable.getValueAt(i, 0).equals("Dịch vụ")){
+                    createServiceDeTail(iCode, pCode, pName, price, quan);
+                }
+            }
+            updateProductTable();
+            updateStatistic();
+        } else {
+            valid = true;
+        }
     }//GEN-LAST:event_jButton21ActionPerformed
 
     private void jButton23ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton23ActionPerformed
@@ -1743,8 +2271,21 @@ public class ManagerForm extends javax.swing.JFrame {
     private void jButton22ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton22ActionPerformed
         // TODO add your handling code here:
         int index = serviceTable.getSelectedRow();
+        if (index != -1)   {
+        if (JOptionPane.showConfirmDialog(null, "Bạn có chắc muốn xóa dịch vụ này ?", "Cảnh báo",JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+            // yes optio
+            
+        
         DefaultTableModel model = (DefaultTableModel) serviceTable.getModel();
+        String code = model.getValueAt(index, 0).toString();
         if (index != -1) model.removeRow(index);
+        
+        Service t = new Service(code);
+        int deleteService = ServiceDAO.getInstance().delete(t);
+        ManagerForm.updateServiceTable();
+        ManagerForm.updateProductTable();
+        }
+        }
     }//GEN-LAST:event_jButton22ActionPerformed
 
     private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed
@@ -1772,6 +2313,8 @@ public class ManagerForm extends javax.swing.JFrame {
         // TODO add your handling code here:
         int index = productListTable.getSelectedRow();
         if (index > -1) {
+                    if (JOptionPane.showConfirmDialog(null, "Bạn có chắc muốn xóa sản này ?", "Cảnh báo",JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+
             DefaultTableModel model = (DefaultTableModel) productListTable.getModel(); 
 //            Lấy ra product ID của hàng đã đc người dùng select
             String productId = (String) model.getValueAt(index, 0);
@@ -1779,7 +2322,12 @@ public class ManagerForm extends javax.swing.JFrame {
             product.setProductCode(productId);
             model.removeRow(index);
             int deleteRow = ProductDAO.getInstance().delete(product);
+            ManagerForm.updateProductListTable();
+        ManagerForm.updateProductTable();
+                    }
         }
+//        ManagerForm.updateProductListTable();
+//        ManagerForm.updateProductTable();
     }//GEN-LAST:event_jButton9ActionPerformed
 
     private void jButton10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton10ActionPerformed
@@ -1813,6 +2361,7 @@ public class ManagerForm extends javax.swing.JFrame {
         // TODO add your handling code here:
         int index = customerTable.getSelectedRow();
         if (index != -1) {
+            if (JOptionPane.showConfirmDialog(null, "Bạn có chắc muốn xóa khách hàng này ?", "Cảnh báo",JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
             DefaultTableModel model = (DefaultTableModel) customerTable.getModel();
             String cusId = (String) model.getValueAt(index, 0);
             System.out.println(cusId);
@@ -1821,6 +2370,8 @@ public class ManagerForm extends javax.swing.JFrame {
             System.out.println(customer);
             int deleteRow = CustomerDAO.getInstance().delete(customer);
             model.removeRow(index);
+            updateCustomerFavListTable();
+            }
         }
     }//GEN-LAST:event_jButton12ActionPerformed
 
@@ -1882,6 +2433,7 @@ public class ManagerForm extends javax.swing.JFrame {
         // TODO add your handling code here:
         int index = serviceTypeTable.getSelectedRow();
         if (index > -1) {
+            if (JOptionPane.showConfirmDialog(null, "Bạn có chắc muốn xóa thú cưng này ?", "Cảnh báo",JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
             DefaultTableModel model = (DefaultTableModel) serviceTypeTable.getModel(); 
 //            Lấy ra product ID của hàng đã đc người dùng select
             String petId = (String) model.getValueAt(index, 0);
@@ -1889,7 +2441,12 @@ public class ManagerForm extends javax.swing.JFrame {
             pet.setCode(petId);
             model.removeRow(index);
             int deleteRow = PetDAO.getInstance().delete(pet);
+            updatePetTable();
+        petArray = PetDAO.getInstance().SelectAll();
+        updateProductTable();
+            }
         }
+        
     }//GEN-LAST:event_jButton25ActionPerformed
 
     private void jButton26ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton26ActionPerformed
@@ -1981,6 +2538,228 @@ public class ManagerForm extends javax.swing.JFrame {
        
         setSumCost();
     }//GEN-LAST:event_serviceListMouseClicked
+
+    private void searchInvoiceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchInvoiceActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_searchInvoiceActionPerformed
+
+    private void searchBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchBtnActionPerformed
+        // TODO add your handling code here:
+        DefaultTableModel model = (DefaultTableModel) serviceTable.getModel();
+        model.setRowCount(0);
+        
+        String search = searchService.getText();
+        if (search.equals("")){
+            updateServiceStatisticListTable();
+        }
+        ArrayList<Service> serList = ServiceDAO.findServiceByIdOrName(search);
+        if (serList.isEmpty()){
+            System.err.println("Khong the tim");
+        }
+        else {
+            for (Service p : serList){
+                model.addRow(new Object[]{p.getServiceCode(), p.getServiceName(), p.getServiceNotes(), p.getServicePrice()});
+            }
+            serviceTable.setModel(model);
+        }
+    }//GEN-LAST:event_searchBtnActionPerformed
+
+    private void searchInvoiceBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchInvoiceBtnActionPerformed
+        // TODO add your handling code here:
+        DefaultTableModel model = (DefaultTableModel) invoiceListTable.getModel();
+        model.setRowCount(0);
+        
+        String search = searchInvoice.getText();
+        if (search.equals("")){
+            updateInvoiceListTable();
+            return;
+        }
+        ArrayList<Invoice> invoiceList = InvoiceDAO.findServiceByIdOrName(search);
+        if (invoiceList.isEmpty()){
+            System.err.println("Khong the tim");
+        }
+        else {
+            for (Invoice p : invoiceList){
+                model.addRow(new Object[]{p.getInvoiceCode(), p.getEmpName(), p.getCusName(), p.getDateCreate(), p.getTotal()});
+            }
+            invoiceListTable.setModel(model);
+        }
+    }//GEN-LAST:event_searchInvoiceBtnActionPerformed
+
+    private void jButton28ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton28ActionPerformed
+        // TODO add your handling code here:
+        dispose();
+        new LoginFrame();
+    }//GEN-LAST:event_jButton28ActionPerformed
+
+    private void searchProBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchProBtnActionPerformed
+        // TODO add your handling code here:
+        DefaultTableModel model = (DefaultTableModel) productStatistic.getModel();
+        model.setRowCount(0);
+        
+        String search = searchProduct.getText();
+        if (search.equals("")){
+            updateProductStatisticListTable();
+            return;
+        }
+        ArrayList<Product> proList = ProductDAO.findServiceByIdOrName(search);
+        if (proList.isEmpty()){
+            System.err.println("Khong the tim");
+        }
+        else {
+            for (Product p : proList){
+                int stock = p.getQuantity();
+                int sold = ProductDAO.getSoldCount(p.getProductCode());
+                model.addRow(new Object[] {p.getProductCode(),p.getProductName(), stock + sold,stock, sold,ProductDAO.getRevenue(p.getProductCode())});            
+            }
+                productStatistic.setModel(model);
+        }
+    }//GEN-LAST:event_searchProBtnActionPerformed
+
+    private void searchSerBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchSerBtnActionPerformed
+        // TODO add your handling code here:
+        DefaultTableModel model = (DefaultTableModel) serviceS.getModel();
+        model.setRowCount(0);
+        
+        String search = searchStaField.getText();
+        if (search.equals("")){
+            updateServiceStatisticListTable();
+            return;
+        }
+        ArrayList<Service> serList = ServiceDAO.findServiceByIdOrName(search);
+        if (serList.isEmpty()){
+            System.err.println("Khong the tim");
+        }
+        else {
+            for (Service p : serList){
+                int quan = ServiceDAO.getCount(p.getServiceCode());
+                int re = ServiceDAO.getRevenue(p.getServiceCode());
+                model.addRow(new Object[] {p.getServiceCode(),p.getServiceName(),quan,re});           
+            }
+                serviceS.setModel(model);
+        }
+        
+    }//GEN-LAST:event_searchSerBtnActionPerformed
+
+    private void searchPetBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchPetBtnActionPerformed
+        // TODO add your handling code here:
+        DefaultTableModel model = (DefaultTableModel) petTab.getModel();
+        model.setRowCount(0);
+        
+        String search = searchPet.getText();
+        if (search.equals("")){
+            updatePetListTable();
+            return;
+        }
+        ArrayList<Pet> petList = PetDAO.findServiceByIdOrName(search);
+        ArrayList<PetDetail> petDetail = PetDetailDAO.findServiceByIdOrName(search);
+        if (petList.isEmpty() && petDetail.isEmpty()){
+            System.err.println("Khong the tim");
+        }
+        else {
+            for (PetDetail p : petDetail) {
+                model.addRow(new Object[] {p.getPetCode(),p.getPetName(),p.getPrice()});
+            }
+            for (Pet p : petList){
+                model.addRow(new Object[] {p.getCode(),p.getName(),""});           
+            }
+            petTab.setModel(model);
+        }
+        
+    }//GEN-LAST:event_searchPetBtnActionPerformed
+
+    private void searchBtnPetManActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchBtnPetManActionPerformed
+        // TODO add your handling code here:
+        DefaultTableModel model = (DefaultTableModel) serviceTypeTable.getModel();
+        model.setRowCount(0);
+        
+        String search = searchPetMan.getText();
+        if (search.equals("")){
+            updatePetTable();
+            return;
+        }
+        ArrayList<Pet> petList = PetDAO.findServiceByIdOrName(search);
+        
+        if (petList.isEmpty()){
+            System.err.println("Khong the tim");
+        }
+        else {
+            for (Pet p : petList){
+                model.addRow(new Object[] {p.getCode(),p.getName(),p.getType(), p.getDateOfAcc(), p.getPrice(), p.getNotes()});           
+            }
+            serviceTypeTable.setModel(model);
+        }
+        
+    }//GEN-LAST:event_searchBtnPetManActionPerformed
+
+    private void searchBtnProductActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchBtnProductActionPerformed
+        // TODO add your handling code here:
+        DefaultTableModel model = (DefaultTableModel) productListTable.getModel();
+        model.setRowCount(0);
+        
+        String search = productSearchMan.getText();
+        if (search.equals("")){
+            updateProductTable();
+            return;
+        }
+        ArrayList<Product> proList = ProductDAO.findServiceByIdOrName(search);
+        
+        if (proList.isEmpty()){
+            System.err.println("Khong the tim");
+        }
+        else {
+            for (Product p : proList){
+                model.addRow(new Object[] {p.getProductCode(),p.getProductName(),p.getQuantity(), p.getImportPrice(), p.getProductPrice(), p.getProductNotes(), p.getDateAdded()});           
+            }
+            productListTable.setModel(model);
+        }
+    }//GEN-LAST:event_searchBtnProductActionPerformed
+
+    private void searchCusBtnManActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchCusBtnManActionPerformed
+        // TODO add your handling code here:
+        DefaultTableModel model = (DefaultTableModel) customerTable.getModel();
+        model.setRowCount(0);
+        
+        String search = customerSearchMan.getText();
+        if (search.equals("")){
+            updateCusTable();
+            return;
+        }
+        ArrayList<Customer> cusList = CustomerDAO.findServiceByIdOrName(search);
+        
+        if (cusList.isEmpty()){
+            System.err.println("Khong the tim");
+        }
+        else {
+            for (Customer p : cusList){
+                model.addRow(new Object[] {p.getCode(),p.getPhoneNumber(),p.getName(), p.getAddress(), p.getEmail(), p.getDateOfBirth()});           
+            }
+            customerTable.setModel(model);
+        }
+    }//GEN-LAST:event_searchCusBtnManActionPerformed
+
+    private void searchBtnEmpManActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchBtnEmpManActionPerformed
+        // TODO add your handling code here:
+        DefaultTableModel model = (DefaultTableModel) empTable.getModel();
+        model.setRowCount(0);
+        
+        String search = empSearchMan.getText();
+        if (search.equals("")){
+            updateEmpTable();
+            return;
+        }
+        ArrayList<Employee> empList = EmployeeDAO.findServiceByIdOrName(search);
+        
+        if (empList.isEmpty()){
+            System.err.println("Khong the tim");
+        }
+        else {
+            for (Employee p : empList){
+                model.addRow(new Object[] {p.getCode(), p.getName(), p.getDateOfBirth(), p.getAddress(), p.getEmail(), p.getPhoneNumber(), p.getDateOfEmployee(),p.getSalary()});           
+            }
+            empTable.setModel(model);
+        }
+    }//GEN-LAST:event_searchBtnEmpManActionPerformed
 
     public static void replaceRowToServiceTable(Object[] data,int row) {
         DefaultTableModel modelservice = (DefaultTableModel) serviceTable.getModel(); 
@@ -2074,15 +2853,21 @@ public class ManagerForm extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel PetBtn;
+    private static javax.swing.JTable cusFav;
+    private static javax.swing.JTextField cusName;
+    private static javax.swing.JTextField cusPhone;
     private javax.swing.JLabel customerBtn;
     private javax.swing.JPanel customerLayout;
+    private javax.swing.JTextField customerSearchMan;
     private static javax.swing.JTable customerTable;
-    private javax.swing.JLabel dateLable;
+    private static javax.swing.JLabel dateLable;
     private javax.swing.JLabel empBtn;
     private javax.swing.JPanel empLayout;
+    private javax.swing.JTextField empSearchMan;
     private static javax.swing.JTable empTable;
     private javax.swing.JLabel invoiceBtn;
     private javax.swing.JPanel invoiceLayout;
+    private static javax.swing.JTable invoiceListTable;
     private javax.swing.JButton jButton10;
     private javax.swing.JButton jButton11;
     private javax.swing.JButton jButton12;
@@ -2098,10 +2883,10 @@ public class ManagerForm extends javax.swing.JFrame {
     private javax.swing.JButton jButton25;
     private javax.swing.JButton jButton26;
     private javax.swing.JButton jButton27;
+    private javax.swing.JButton jButton28;
     private javax.swing.JButton jButton7;
     private javax.swing.JButton jButton8;
     private javax.swing.JButton jButton9;
-    private javax.swing.JComboBox<String> jComboBox2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
@@ -2111,9 +2896,10 @@ public class ManagerForm extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel18;
     private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel20;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
+    private static javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
@@ -2138,18 +2924,22 @@ public class ManagerForm extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel26;
     private javax.swing.JPanel jPanel27;
     private javax.swing.JPanel jPanel28;
+    private javax.swing.JPanel jPanel29;
     private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel30;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel jPanel8;
+    private javax.swing.JPanel jPanel9;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane10;
     private javax.swing.JScrollPane jScrollPane11;
     private javax.swing.JScrollPane jScrollPane12;
     private javax.swing.JScrollPane jScrollPane13;
     private javax.swing.JScrollPane jScrollPane14;
+    private javax.swing.JScrollPane jScrollPane15;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
@@ -2158,27 +2948,39 @@ public class ManagerForm extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane7;
     private javax.swing.JScrollPane jScrollPane8;
     private javax.swing.JScrollPane jScrollPane9;
-    private javax.swing.JTabbedPane jTabbedPane1;
-    private javax.swing.JTable jTable5;
-    private javax.swing.JTable jTable6;
-    private javax.swing.JTable jTable7;
-    private javax.swing.JTable jTable8;
     private javax.swing.JTextArea jTextArea1;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
-    private javax.swing.JTextField jTextField3;
-    private javax.swing.JTextField jTextField6;
     private javax.swing.JLabel nameEmp;
     private javax.swing.JPanel petLayout;
     private static javax.swing.JList<String> petList;
+    private javax.swing.JPanel petS;
+    private static javax.swing.JTable petTab;
     private javax.swing.JLabel productBtn;
     private javax.swing.JPanel productLayout;
     private static javax.swing.JList<String> productList;
     private static javax.swing.JTable productListTable;
+    private javax.swing.JTextField productSearchMan;
+    private static javax.swing.JTable productStatistic;
     private static javax.swing.JTable productTable;
+    private javax.swing.JButton searchBtn;
+    private javax.swing.JButton searchBtnEmpMan;
+    private javax.swing.JButton searchBtnPetMan;
+    private javax.swing.JButton searchBtnProduct;
+    private javax.swing.JButton searchCusBtnMan;
+    private javax.swing.JTextField searchInvoice;
+    private javax.swing.JButton searchInvoiceBtn;
+    private javax.swing.JTextField searchPet;
+    private javax.swing.JButton searchPetBtn;
+    private javax.swing.JTextField searchPetMan;
+    private javax.swing.JButton searchProBtn;
+    private javax.swing.JTextField searchProduct;
+    private javax.swing.JTabbedPane searchSer;
+    private javax.swing.JButton searchSerBtn;
+    private javax.swing.JTextField searchService;
+    private javax.swing.JTextField searchStaField;
     private javax.swing.JLabel serviceBtn;
     private javax.swing.JPanel serviceLayout;
     private static javax.swing.JList<String> serviceList;
+    private static javax.swing.JTable serviceS;
     private static javax.swing.JTable serviceTable;
     private static javax.swing.JTable serviceTypeTable;
     private javax.swing.JLabel statisticBtn;

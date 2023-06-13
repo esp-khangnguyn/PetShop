@@ -162,7 +162,7 @@ public class InputServiceForm extends javax.swing.JFrame {
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel1.setText("Thêm dịch vụ");
+        jLabel1.setText("THÊM DỊCH VỤ");
         jLabel1.setHorizontalTextPosition(javax.swing.SwingConstants.LEADING);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
@@ -192,10 +192,10 @@ public class InputServiceForm extends javax.swing.JFrame {
     }//GEN-LAST:event_servicePriceActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        boolean valid = true;
         code = serviceCode.getText();
         name = serviceName.getText();
         String sPrice = servicePrice.getText();
-        price = Integer.parseInt(sPrice);
         note = serviceNote.getText();
         if (note.equals("")){
             note = "NONE";
@@ -206,26 +206,31 @@ public class InputServiceForm extends javax.swing.JFrame {
         
         StringBuilder sb = new StringBuilder();
         if (code.equals("")){
+            valid = false;
             sb.append("Ma dich vu is empty!\n");
         }
         if (name.equals("")){
             sb.append("Ten dich vu is empty!\n");
+            valid = false;
         }
         if (sPrice.equals("")){
             sb.append("Gia dich vu is empty!\n");
+            valid = false;
         }
         if (sb.length() > 0){
                     SwingUtilities.invokeLater(() -> {
             JOptionPane.showMessageDialog(this, sb.toString(), "Invalidation", JOptionPane.ERROR_MESSAGE);
         });
         }
-        
-        Service service = new Service(code, name, note, price);
+        if (valid){
+            Service service = new Service(code, name, note, price);
         boolean check = ServiceDAO.getInstance().isExistedID(code);
+        price = Integer.parseInt(sPrice);
         if (check){
             if (isUpdate){
                 int updateSer = ServiceDAO.getInstance().update(service);
                 ManagerForm.updateServiceTable();
+                ManagerForm.updateProductTable();
             }
             else{
                 JOptionPane.showMessageDialog(this, "Ma dich vu da duoc su dung!", "Error!", JOptionPane.ERROR_MESSAGE);
@@ -237,12 +242,19 @@ public class InputServiceForm extends javax.swing.JFrame {
             if (isUpdate){
                 ManagerForm.replaceRowToServiceTable(getRow(),this.row);
                 ManagerForm.updateServiceTable();
+                ManagerForm.updateProductTable();
             }
             else {
-                ManagerForm.addRowToServiceTable(getRow());
+                ManagerForm.updateServiceTable();
+                ManagerForm.updateProductTable();
             }
         }
         dispose();
+        } else {
+            valid = true;
+        }
+        
+        
        
        
     }//GEN-LAST:event_jButton1ActionPerformed

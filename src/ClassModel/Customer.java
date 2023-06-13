@@ -16,8 +16,20 @@ public class Customer {
     private String email;
     private String phoneNumber;
     private String notes;
-    
+    private int invoiceCount;
+//    public Customer() {
+//        this.invoiceCount = 0;
+//    }
+
     public Customer() {
+        this.code = "pp";
+        this.name = "none";
+        this.dateOfBirth = "none";
+        this.address = "none";
+        this.email = "none";
+        this.phoneNumber = "none";
+        this.notes = "none";
+        this.invoiceCount = 0;
     }
 
     public Customer(String code, String name, String dateOfBirth, String address, String email, String phoneNumber, String notes) {
@@ -28,7 +40,29 @@ public class Customer {
         this.email = email;
         this.phoneNumber = phoneNumber;
         this.notes = notes;
+        this.invoiceCount = 0;
     }
+    
+    public Customer(String code, String name, String dateOfBirth, String address, String email, String phoneNumber, String notes,int count) {
+        this.code = code;
+        this.name = name;
+        this.dateOfBirth = dateOfBirth;
+        this.address = address;
+        this.email = email;
+        this.phoneNumber = phoneNumber;
+        this.notes = notes;
+        this.invoiceCount = count;
+    }
+
+    public int getInvoiceCount() {
+        return invoiceCount;
+    }
+
+    public void setInvoiceCount(int invoiceCount) {
+        this.invoiceCount = invoiceCount;
+    }
+    
+    
 
     public String getCode() {
         return code;

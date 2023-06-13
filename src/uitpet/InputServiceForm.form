@@ -213,7 +213,7 @@
               <Color blue="ff" green="ff" red="ff" type="rgb"/>
             </Property>
             <Property name="horizontalAlignment" type="int" value="0"/>
-            <Property name="text" type="java.lang.String" value="Th&#xea;m d&#x1ecb;ch v&#x1ee5;"/>
+            <Property name="text" type="java.lang.String" value="TH&#xca;M D&#x1eca;CH V&#x1ee4;"/>
             <Property name="horizontalTextPosition" type="int" value="10"/>
           </Properties>
         </Component>

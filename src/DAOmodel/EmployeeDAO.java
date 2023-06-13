@@ -18,6 +18,44 @@ public class EmployeeDAO implements DAOInterface<Employee>{
     public static EmployeeDAO getInstance(){
         return new EmployeeDAO();
     }
+    public static ArrayList<Employee> findServiceByIdOrName(String str){
+        ArrayList<Employee> empList = new ArrayList<>();
+        try {
+            Connection con = JDBCUtil.getConnection();
+            
+            String sql = "SELECT * FROM EMPLOYEE WHERE EMPLOYEE_CODE LIKE ? OR EMPLOYEE_NAME LIKE ?";
+            String searchValue = "%" +str+ "%";
+            
+            PreparedStatement pst = con.prepareStatement(sql);
+            pst.setString(1, searchValue);
+            pst.setString(2, searchValue);
+           
+            
+            ResultSet rs = pst.executeQuery();
+            System.out.println("You have done: " + sql);
+            
+            while(rs.next()){
+                String code = rs.getString("EMPLOYEE_CODE");
+                String name = rs.getString("EMPLOYEE_NAME");
+                String dateOfBirth = rs.getString("DATE_OF_BIRTH");
+                String address = rs.getString("ADDRESS");
+                String email = rs.getString("EMAIL");
+                String phoneNumber = rs.getString("PHONE_NUMBER");
+                String dateOfEmployee = rs.getString("DATE_OF_EMPLOYMENT");
+                String position = rs.getString("POSITION");
+                int salary = rs.getInt("SALARY");
+                String notes = rs.getString("NOTES");
+                String accountId = rs.getString("ACCOUNT_ID");
+                Employee employee = new Employee(code, name, dateOfBirth, address, email, phoneNumber, dateOfEmployee, position, salary, notes,accountId);
+                empList.add(employee);
+            }
+            JDBCUtil.closeConnection(con);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Cannot select by Id! Please try again!");
+        }
+       return empList;
+    }
     
     public static boolean isExistedID(String code){
         boolean check = false;

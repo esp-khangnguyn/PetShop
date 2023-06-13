@@ -18,6 +18,57 @@ public class ProductDAO implements DAOInterface<Product>{
     public static ProductDAO getInstance(){
         return new ProductDAO();
     }
+    public static ArrayList<Product> findServiceByIdOrName(String str){
+        ArrayList<Product> productList = new ArrayList<>();
+        try {
+            Connection con = JDBCUtil.getConnection();
+            
+            String sql = "SELECT * FROM PRODUCT WHERE PRODUCT_CODE LIKE ? OR PRODUCT_NAME LIKE ?";
+            String searchValue = "%" +str+ "%";
+            
+            PreparedStatement pst = con.prepareStatement(sql);
+            pst.setString(1, searchValue);
+            pst.setString(2, searchValue);
+           
+            
+            ResultSet rs = pst.executeQuery();
+            System.out.println("You have done: " + sql);
+            
+            while(rs.next()){
+                String code = rs.getString("PRODUCT_CODE");
+                String name = rs.getString("PRODUCT_NAME");
+                int price = rs.getInt("PRICE");
+                String notes = rs.getString("NOTES");
+                int importPrice = rs.getInt("IMPORT_PRICE");
+                int quantity =  rs.getInt("QUANTITY");
+                String dateAdded = rs.getString("DATE_ADDED");
+                Product product = new Product(code, name, price, notes, importPrice, quantity, dateAdded);
+                productList.add(product);
+            }
+            JDBCUtil.closeConnection(con);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Cannot select by Id! Please try again!");
+        }
+       return productList;
+    }
+    public static void updateProductByID(String pid, int quantity){
+        try {
+            Connection conn = JDBCUtil.getConnection();
+            String sql = "UPDATE PRODUCT SET QUANTITY=?  WHERE PRODUCT_CODE = ?";
+            PreparedStatement pst = conn.prepareStatement(sql);
+            
+            pst.setInt(1, quantity );
+            pst.setString(2,pid);
+            ResultSet rs = pst.executeQuery();
+
+   
+            JDBCUtil.closeConnection(conn);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
     public static boolean isExistedID(String code){
         boolean check = false;
         try {
@@ -37,6 +88,74 @@ public class ProductDAO implements DAOInterface<Product>{
             e.printStackTrace();
         }
         return check;
+    }
+    
+    public static int getSoldCount(String code){
+        int count  = 0;
+        try {
+            Connection conn = JDBCUtil.getConnection();
+            String sql = "SELECT SUM(QUANTITY) FROM PRODUCT_DETAIL WHERE PRODUCT_CODE = ?";
+            PreparedStatement pst = conn.prepareStatement(sql);
+            pst.setString(1, code);
+            
+            ResultSet rs = pst.executeQuery();
+            rs.next();
+            count = rs.getInt(1);
+
+            JDBCUtil.closeConnection(conn);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return count;
+    }
+    
+    public static int getRevenue(String code){
+        int sum  = 0;
+        try {
+            Connection conn = JDBCUtil.getConnection();
+            String sql = "SELECT SUM(PRICE*QUANTITY) FROM PRODUCT_DETAIL WHERE PRODUCT_CODE = ?";
+            PreparedStatement pst = conn.prepareStatement(sql);
+            pst.setString(1, code);
+            
+            ResultSet rs = pst.executeQuery();
+            rs.next();
+            sum = rs.getInt(1);
+
+            JDBCUtil.closeConnection(conn);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return sum;
+    }
+    
+    public static ArrayList<Product> SelectAvble() {
+       ArrayList<Product> productList = new ArrayList<>();
+        try {
+            Connection c = JDBCUtil.getConnection();
+            Statement st = c.createStatement();
+            
+            String sql = "SELECT * FROM PRODUCT WHERE QUANTITY > 0";
+            ResultSet rs = st.executeQuery(sql);
+            
+            while(rs.next()){
+                String code = rs.getString("PRODUCT_CODE");
+                String name = rs.getString("PRODUCT_NAME");
+                int price = rs.getInt("PRICE");
+                String notes = rs.getString("NOTES");
+                int importPrice = rs.getInt("IMPORT_PRICE");
+                int quantity =  rs.getInt("QUANTITY");
+                String dateAdded = rs.getString("DATE_ADDED");
+                Product product = new Product(code, name, price, notes, importPrice, quantity, dateAdded);
+                productList.add(product);
+            }
+            System.out.println("You have done: " + sql);
+            
+            JDBCUtil.closeConnection(c);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Cannot Query! Please try again");
+        }
+        return productList;
     }
     
     @Override

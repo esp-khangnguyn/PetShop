@@ -18,6 +18,66 @@ public class PetDAO implements DAOInterface<Pet>{
         return new PetDAO();
     }
     
+    public static ArrayList<Pet> findServiceByIdOrName(String str){
+        ArrayList<Pet> petList = new ArrayList<>();
+        try {
+            Connection con = JDBCUtil.getConnection();
+            
+            String sql = "SELECT * FROM PET WHERE PET_CODE LIKE ? OR PET_NAME LIKE ?";
+            String searchValue = "%" +str+ "%";
+            
+            PreparedStatement pst = con.prepareStatement(sql);
+            pst.setString(1, searchValue);
+            pst.setString(2, searchValue);
+           
+            
+            ResultSet rs = pst.executeQuery();
+            System.out.println("You have done: " + sql);
+            
+            while(rs.next()){
+                String code = rs.getString("PET_CODE");
+                String name = rs.getString("PET_NAME");
+                String type = rs.getString("PET_TYPE");
+                String dateOfAcq = rs.getString("DATE_OF_ACQUISITION");
+                int price = rs.getInt("PRICE");
+                String notes = rs.getString("NOTES");
+                
+                Pet pet = new Pet(code, name, type, dateOfAcq, price, notes);
+                petList.add(pet);
+            }
+            JDBCUtil.closeConnection(con);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Cannot select by Id! Please try again!");
+        }
+       return petList;
+    }
+    
+    public static Pet selectByID(String pCode){
+        Pet pet = null;
+        try {
+            Connection conn = JDBCUtil.getConnection();
+            String sql = "SELECT * FROM PET WHERE PET_CODE = ?";
+            PreparedStatement pst = conn.prepareStatement(sql);
+            pst.setString(1, pCode);
+            ResultSet rs = pst.executeQuery();
+            while (rs.next()) {
+                
+                String code = rs.getString("PET_CODE");
+                String name = rs.getString("PET_NAME");
+                String type = rs.getString("PET_TYPE");
+                String dateOfAcq = rs.getString("DATE_OF_ACQUISITION");
+                int price = rs.getInt("PRICE");
+                String notes = rs.getString("NOTES");
+                pet = new Pet(code, name, type, dateOfAcq, price, notes);
+            }
+            JDBCUtil.closeConnection(conn);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return pet;
+    }
+    
     public static boolean isExistedID(String code){
         boolean check = false;
         try {

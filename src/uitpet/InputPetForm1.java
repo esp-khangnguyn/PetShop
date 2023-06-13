@@ -191,7 +191,7 @@ public class InputPetForm1 extends javax.swing.JFrame {
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel1.setText("Thêm sản phẩm");
+        jLabel1.setText("THÊM THÚ CƯNG");
         jLabel1.setHorizontalTextPosition(javax.swing.SwingConstants.LEADING);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
@@ -267,8 +267,8 @@ public class InputPetForm1 extends javax.swing.JFrame {
         }
 //        Ep kieu
         System.out.println(type);
-        price = Integer.parseInt(stringPrice);
         if (valid == true){
+           price = Integer.parseInt(stringPrice);
            Pet pet = new Pet(code, name, type, date, price, note);
             boolean petCheck = PetDAO.getInstance().isExistedID(code);
 //            System.out.println(productCheck);
@@ -276,6 +276,8 @@ public class InputPetForm1 extends javax.swing.JFrame {
                 if (isUpdate){
                     int updatePet = PetDAO.getInstance().update(pet);
                     ManagerForm.updatePetTable();
+                    ManagerForm.petArray = PetDAO.getInstance().SelectAll();
+                     ManagerForm.updateProductTable();
 
                 }
                 else {
@@ -289,19 +291,22 @@ public class InputPetForm1 extends javax.swing.JFrame {
                 if (isUpdate) {
 //                    ManagerForm.replaceRowToProductListTable(getRow(),this.row);
                        ManagerForm.updatePetTable();
-//                       ManagerForm.resetTable();
+                        ManagerForm.petArray = PetDAO.getInstance().SelectAll();
+                        ManagerForm.updateProductTable();
+                       
                 }
                 else {
-                    ManagerForm.addRowToPetTable(getRow());
+                     ManagerForm.updatePetTable();
+                     ManagerForm.petArray = PetDAO.getInstance().SelectAll();
+                     ManagerForm.updateProductTable();
                 }
             }
+            dispose();
         }
         else {
             valid = true;
         }
         ManagerForm.updatePetList();
-        dispose();
-     
     }//GEN-LAST:event_inputPetSubmitBtnActionPerformed
 
 

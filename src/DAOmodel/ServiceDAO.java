@@ -17,6 +17,74 @@ public class ServiceDAO implements DAOInterface<Service>{
         return new ServiceDAO();
     }
     
+    public static int getCount(String code){
+        int count = 0;
+        try {
+            Connection conn = JDBCUtil.getConnection();
+            String sql = "SELECT SUM(QUANTITY) FROM SERVICE_DETAIL WHERE SERVICE_CODE = ?";
+            PreparedStatement pst = conn.prepareStatement(sql);
+            pst.setString(1, code);
+            
+            ResultSet rs = pst.executeQuery();
+            rs.next();
+            count = rs.getInt(1);
+            JDBCUtil.closeConnection(conn);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return count;
+    }
+    
+    public static ArrayList<Service> findServiceByIdOrName(String str){
+        ArrayList<Service> serList = new ArrayList<>();
+        try {
+            Connection con = JDBCUtil.getConnection();
+            
+            String sql = "SELECT * FROM SERVICE WHERE SERVICE_CODE LIKE ? OR SERVICE_NAME LIKE ?";
+            String searchValue = "%" +str+ "%";
+            
+            PreparedStatement pst = con.prepareStatement(sql);
+            pst.setString(1, searchValue);
+            pst.setString(2, searchValue);
+           
+            
+            ResultSet rs = pst.executeQuery();
+            System.out.println("You have done: " + sql);
+            
+            while(rs.next()){
+                String code = rs.getString("SERVICE_CODE");
+                String serName = rs.getString("SERVICE_NAME");
+                int price = rs.getInt("PRICE");
+                String notes = rs.getString("NOTES");
+                
+                Service service = new Service(code, serName, notes, price);
+                serList.add(service);
+            }
+            JDBCUtil.closeConnection(con);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Cannot select by Id! Please try again!");
+        }
+       return serList;
+    }
+    public static int getRevenue(String code){
+        int count = 0;
+        try {
+            Connection conn = JDBCUtil.getConnection();
+            String sql = "SELECT SUM(QUANTITY*PRICE) FROM SERVICE_DETAIL WHERE SERVICE_CODE = ?";
+            PreparedStatement pst = conn.prepareStatement(sql);
+            pst.setString(1, code);
+            
+            ResultSet rs = pst.executeQuery();
+            rs.next();
+            count = rs.getInt(1);
+            JDBCUtil.closeConnection(conn);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return count;
+    }
+    
     public static boolean isExistedID(String code){
         boolean check = false;
         try {

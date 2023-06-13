@@ -6,6 +6,7 @@ package uitpet;
 
 import ClassModel.Product;
 import DAOmodel.ProductDAO;
+import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
@@ -201,7 +202,7 @@ public class InputProductForm extends javax.swing.JFrame {
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel1.setText("Thêm sản phẩm");
+        jLabel1.setText("THÊM SẢN PHẨM");
         jLabel1.setHorizontalTextPosition(javax.swing.SwingConstants.LEADING);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
@@ -281,16 +282,21 @@ public class InputProductForm extends javax.swing.JFrame {
         });
         }
 //        Ep kieu
-        inPrice = Integer.parseInt(stringImportPrice);
-        outPrice = Integer.parseInt(stringPrice);
+        
         if (valid == true){
+            inPrice = Integer.parseInt(stringImportPrice);
+            outPrice = Integer.parseInt(stringPrice);
             Product product = new Product(code, name, outPrice, note, inPrice, quantity, date);
             boolean productCheck = ProductDAO.getInstance().isExistedID(code);
             System.out.println(productCheck);
             if (productCheck == true){
                 if (isUpdate){
                     int updatePro = ProductDAO.getInstance().update(product);
+                    ManagerForm.productArrayOrigin = ProductDAO.getInstance().SelectAll();
+                       ManagerForm.productArray = ProductDAO.SelectAvble();
+                       ManagerForm.productArrayDel = new ArrayList<>();
                     ManagerForm.updateProductListTable();
+                    ManagerForm.updateProductTable();
 
                 }
                 else {
@@ -304,17 +310,27 @@ public class InputProductForm extends javax.swing.JFrame {
                 if (isUpdate) {
 //                    ManagerForm.replaceRowToProductListTable(getRow(),this.row);
                        ManagerForm.updateProductListTable();
+                       ManagerForm.productArrayOrigin = ProductDAO.getInstance().SelectAll();
+                       ManagerForm.productArray = ProductDAO.SelectAvble();
+                       ManagerForm.productArrayDel = new ArrayList<>();
 //                       ManagerForm.resetTable();
+                        ManagerForm.updateProductTable();
                 }
                 else {
-                    ManagerForm.addRowToProductListTable(getRow());
+                    ManagerForm.productArrayOrigin = ProductDAO.getInstance().SelectAll();
+                       ManagerForm.productArray = ProductDAO.SelectAvble();
+                       ManagerForm.productArrayDel = new ArrayList<>();
+                    ManagerForm.updateProductListTable();
+//                       ManagerForm.resetTable();
+                        ManagerForm.updateProductTable();
                 }
             }
+            dispose();
         }
         else {
             valid = true;
         }
-        dispose();
+        
      
     }//GEN-LAST:event_inputProductSubmitBtnActionPerformed
 
