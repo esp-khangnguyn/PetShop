@@ -195,6 +195,17 @@ public class ManagerForm extends javax.swing.JFrame {
         empTable.setModel(model);
     }
     
+    public static void updateCusTable(){
+        DefaultTableModel model = (DefaultTableModel) customerTable.getModel();
+        model.setRowCount(0);
+        ArrayList<Customer> list = CustomerDAO.getInstance().SelectAll();
+        for (Customer p : list){
+            System.out.println(p);
+            model.addRow(new Object[]{p.getCode(),p.getPhoneNumber(),p.getName(),p.getAddress(),p.getEmail(), p.getDateOfBirth()});
+        }
+        customerTable.setModel(model);
+    }
+    
     public static void updatePetList() {
         DefaultListModel list  = new DefaultListModel() ;   
 //        ArrayList<Pet> listArray = PetDAO.getInstance().SelectAll();
@@ -304,6 +315,7 @@ public class ManagerForm extends javax.swing.JFrame {
         updatePetList();
         updateProductList();
         updateServiceList();
+        updateCusTable();
         
     } 
     
@@ -324,6 +336,7 @@ public class ManagerForm extends javax.swing.JFrame {
         updatePetList();
         updateProductList();
         updateServiceList();
+        updateCusTable();
         
     } 
 
@@ -688,9 +701,8 @@ public class ManagerForm extends javax.swing.JFrame {
                                     .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 260, Short.MAX_VALUE)
                                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 234, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 233, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                        .addComponent(dateLable, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(jLabel6, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 238, Short.MAX_VALUE))))
+                                    .addComponent(dateLable, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, 260, Short.MAX_VALUE)))
                             .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel7Layout.createSequentialGroup()
                                 .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, 262, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(0, 0, Short.MAX_VALUE)))
@@ -791,7 +803,7 @@ public class ManagerForm extends javax.swing.JFrame {
         jPanel8.setLayout(jPanel8Layout);
         jPanel8Layout.setHorizontalGroup(
             jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 561, Short.MAX_VALUE)
+            .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
             .addGroup(jPanel8Layout.createSequentialGroup()
                 .addGap(30, 30, 30)
                 .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
@@ -826,7 +838,7 @@ public class ManagerForm extends javax.swing.JFrame {
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, 488, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel8, javax.swing.GroupLayout.DEFAULT_SIZE, 563, Short.MAX_VALUE)
+                .addComponent(jPanel8, javax.swing.GroupLayout.DEFAULT_SIZE, 428, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel5Layout.setVerticalGroup(
@@ -1842,14 +1854,20 @@ public class ManagerForm extends javax.swing.JFrame {
     private void jButton15ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton15ActionPerformed
         // TODO add your handling code here:
         int index = empTable.getSelectedRow();
-        if (index != -1) {
-            DefaultTableModel model = (DefaultTableModel) empTable.getModel();
-            model.removeRow(index);   
+        if (index > -1) {
+            DefaultTableModel model = (DefaultTableModel) empTable.getModel(); 
+//            Khởi tạo một emp với id = giá trị trong table
             String empId = (String) model.getValueAt(index, 0);
             Employee employee = new Employee();
             employee.setCode(empId);
+//            Khởi tạo emp mới với đầy đủ thuộc tính
+            Employee newEmp = EmployeeDAO.getInstance().SelectById(employee);
+            Account account = AccountDAO.GetAccountIdAcc(newEmp.getAccountId());
+            System.out.print(account);
             int deleteRow = EmployeeDAO.getInstance().delete(employee);
+            int deleteAccount = AccountDAO.getInstance().delete(account);
             model.removeRow(index);
+            
         }
     }//GEN-LAST:event_jButton15ActionPerformed
 

@@ -296,12 +296,13 @@ public class RegisterFrame extends javax.swing.JFrame {
                             .addComponent(manager, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel15)
-                            .addComponent(bdField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(dateField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(bdField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(dateField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 15, Short.MAX_VALUE)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel19)
                             .addComponent(salaryField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(addressField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -411,17 +412,24 @@ public class RegisterFrame extends javax.swing.JFrame {
         else {
             System.out.println(employee);
             System.out.println(account);
-            int createAcc = AccountDAO.getInstance().insert(account);
-            int createEmp = EmployeeDAO.getInstance().insert(employee);
-            
-            JOptionPane.showMessageDialog(this, "Register successfully!");
-            if (isUpdate){
-//                ManagerForm.replaceRowToServiceTable(getRow(),this.row);
-                ManagerForm.updateEmpTable();
+            boolean checkAccountExisted = AccountDAO.getInstance().isUserNameExists(user);
+            if (checkAccountExisted){
+                JOptionPane.showMessageDialog(this, "Ten tai khoan da duoc su dung!", "Error!", JOptionPane.ERROR_MESSAGE);
             }
             else {
-                ManagerForm.addRowToEmpTable(getRow());
+                int createAcc = AccountDAO.getInstance().insert(account);
+                int createEmp = EmployeeDAO.getInstance().insert(employee);
+
+                JOptionPane.showMessageDialog(this, "Register successfully!");
+                if (isUpdate){
+    //                ManagerForm.replaceRowToServiceTable(getRow(),this.row);
+                    ManagerForm.updateEmpTable();
+                }
+                else {
+                    ManagerForm.addRowToEmpTable(getRow());
+                }
             }
+            
         }
         dispose();
        

@@ -25,7 +25,7 @@ public class InputCustomerForm extends javax.swing.JFrame {
         return new Object[] { code,phone,name, address,email,bd};
     }
     
-    public InputCustomerForm(String cCode, String cName, String cPhone, String cAddress, String cEmail, String cBd,int row) {
+    public InputCustomerForm(String cCode, String cPhone, String cName, String cAddress, String cEmail, String cBd,int row) {
         initComponents();
         codeField.setText(cCode);
         nameField1.setText(cName);
@@ -224,6 +224,7 @@ public class InputCustomerForm extends javax.swing.JFrame {
         address = addressField.getText();
         email =emailField.getText();
         bd = bdField.getText();
+        String note = "NONE";
 //        Kiểm tra có bị bỏ trống field hay ko?
         StringBuilder sb = new StringBuilder();
         if (code.equals("")){
@@ -248,23 +249,28 @@ public class InputCustomerForm extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, sb.toString(), "Invalidation", JOptionPane.ERROR_MESSAGE);
             return;
         }
-        Customer customer = new Customer(code, name, bd, address, email, phone, "");
+        Customer customer = new Customer(code, name, bd, address, email, phone, note);
         boolean check = CustomerDAO.getInstance().isExistedID(code);
         if (check == true){
-            JOptionPane.showMessageDialog(this, "Ma khach hang da duoc su dung!", "Error!", JOptionPane.ERROR_MESSAGE);
+            if (isUpdate){
+                int updateCus = CustomerDAO.getInstance().update(customer);
+                ManagerForm.updateCusTable();
+            }
+            else{
+                JOptionPane.showMessageDialog(this, "Ma khach hang da duoc su dung!", "Error!", JOptionPane.ERROR_MESSAGE);
+            } 
         }
         else {
             int createCus = CustomerDAO.getInstance().insert(customer);
-                        JOptionPane.showMessageDialog(this, "Register successfully!");
-            if (isUpdate) {
-                ManagerForm.replaceRowToCustomerTable(getRow(),this.row);
+            JOptionPane.showMessageDialog(this, "Register successfully!");
+            if (isUpdate){
+                ManagerForm.updateCusTable();
             }
             else {
                 ManagerForm.addRowToCustomerTable(getRow());
             }
-            dispose();
         }
-        
+        dispose();
     }//GEN-LAST:event_submitCusBtnActionPerformed
 
     private void codeFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_codeFieldActionPerformed
