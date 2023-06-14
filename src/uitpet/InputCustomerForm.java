@@ -9,8 +9,7 @@ import DAOmodel.CustomerDAO;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
-/**
- *
+/*
  * @author Khang
  */
 public class InputCustomerForm extends javax.swing.JFrame {
@@ -35,6 +34,7 @@ public class InputCustomerForm extends javax.swing.JFrame {
         emailField.setText(cEmail);
         bdField.setText(cBd);
         this.row = row;
+        title.setText("Cập nhật khách hàng");
         isUpdate = true;
     }
     
@@ -66,7 +66,7 @@ public class InputCustomerForm extends javax.swing.JFrame {
         nameField1 = new javax.swing.JTextField();
         jLabel7 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
+        title = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -168,11 +168,11 @@ public class InputCustomerForm extends javax.swing.JFrame {
         jPanel2.setBackground(new java.awt.Color(51, 255, 255));
         jPanel2.setForeground(new java.awt.Color(255, 255, 255));
 
-        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
-        jLabel1.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel1.setText("THÊM KHÁCH HÀNG");
-        jLabel1.setHorizontalTextPosition(javax.swing.SwingConstants.LEADING);
+        title.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        title.setForeground(new java.awt.Color(255, 255, 255));
+        title.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        title.setText("THÊM KHÁCH HÀNG");
+        title.setHorizontalTextPosition(javax.swing.SwingConstants.LEADING);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -180,14 +180,14 @@ public class InputCustomerForm extends javax.swing.JFrame {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(158, 158, 158)
-                .addComponent(jLabel1)
+                .addComponent(title)
                 .addContainerGap(184, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(20, 20, 20)
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(title, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(29, Short.MAX_VALUE))
         );
 
@@ -312,7 +312,6 @@ public class InputCustomerForm extends javax.swing.JFrame {
     private javax.swing.JTextField addressField;
     private javax.swing.JTextField bdField;
     private javax.swing.JTextField emailField;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
@@ -323,5 +322,6 @@ public class InputCustomerForm extends javax.swing.JFrame {
     private javax.swing.JTextField nameField1;
     private javax.swing.JTextField phoneField;
     private javax.swing.JButton submitCusBtn;
+    private javax.swing.JLabel title;
     // End of variables declaration//GEN-END:variables
 }

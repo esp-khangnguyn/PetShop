@@ -39,6 +39,7 @@ public class InputProductForm extends javax.swing.JFrame {
         noteField.setText(pNote);
         dateField.setText(date);
         this.row = row;
+        title.setText("Cập nhật sản phẩm");
         isUpdate = true;
     }
     
@@ -75,7 +76,7 @@ public class InputProductForm extends javax.swing.JFrame {
         jLabel8 = new javax.swing.JLabel();
         outPriceField = new javax.swing.JTextField();
         jPanel2 = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
+        title = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -141,13 +142,12 @@ public class InputProductForm extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(inputProductSubmitBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 455, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(inPriceField, javax.swing.GroupLayout.Alignment.TRAILING)
-                                .addComponent(codeField, javax.swing.GroupLayout.DEFAULT_SIZE, 222, Short.MAX_VALUE)
-                                .addComponent(quantityField))
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 253, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(inPriceField, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(codeField, javax.swing.GroupLayout.DEFAULT_SIZE, 222, Short.MAX_VALUE)
+                            .addComponent(quantityField)
+                            .addComponent(jScrollPane1))
+                        .addGap(49, 49, 49)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -189,7 +189,7 @@ public class InputProductForm extends javax.swing.JFrame {
                             .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel5)))
                     .addComponent(outPriceField, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 64, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 63, Short.MAX_VALUE)
                 .addComponent(inputProductSubmitBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(79, 79, 79))
         );
@@ -199,11 +199,11 @@ public class InputProductForm extends javax.swing.JFrame {
         jPanel2.setBackground(new java.awt.Color(51, 255, 255));
         jPanel2.setForeground(new java.awt.Color(255, 255, 255));
 
-        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
-        jLabel1.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel1.setText("THÊM SẢN PHẨM");
-        jLabel1.setHorizontalTextPosition(javax.swing.SwingConstants.LEADING);
+        title.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        title.setForeground(new java.awt.Color(255, 255, 255));
+        title.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        title.setText("THÊM SẢN PHẨM");
+        title.setHorizontalTextPosition(javax.swing.SwingConstants.LEADING);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -211,14 +211,14 @@ public class InputProductForm extends javax.swing.JFrame {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(339, 339, 339)
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 219, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(title, javax.swing.GroupLayout.PREFERRED_SIZE, 219, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(349, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(23, 23, 23)
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(title, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(26, Short.MAX_VALUE))
         );
 
@@ -378,7 +378,6 @@ public class InputProductForm extends javax.swing.JFrame {
     private javax.swing.JFormattedTextField dateField;
     private javax.swing.JTextField inPriceField;
     private javax.swing.JButton inputProductSubmitBtn;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -393,5 +392,6 @@ public class InputProductForm extends javax.swing.JFrame {
     private javax.swing.JTextArea noteField;
     private javax.swing.JTextField outPriceField;
     private javax.swing.JSpinner quantityField;
+    private javax.swing.JLabel title;
     // End of variables declaration//GEN-END:variables
 }

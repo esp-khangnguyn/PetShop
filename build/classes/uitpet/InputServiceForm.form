@@ -188,7 +188,7 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace min="-2" pref="158" max="-2" attributes="0"/>
-                  <Component id="jLabel1" min="-2" pref="219" max="-2" attributes="0"/>
+                  <Component id="title" min="-2" pref="219" max="-2" attributes="0"/>
                   <EmptySpace pref="184" max="32767" attributes="0"/>
               </Group>
           </Group>
@@ -197,14 +197,14 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
-                  <Component id="jLabel1" min="-2" pref="51" max="-2" attributes="0"/>
+                  <Component id="title" min="-2" pref="51" max="-2" attributes="0"/>
                   <EmptySpace pref="29" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
       </Layout>
       <SubComponents>
-        <Component class="javax.swing.JLabel" name="jLabel1">
+        <Component class="javax.swing.JLabel" name="title">
           <Properties>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
               <Font name="Segoe UI" size="24" style="1"/>

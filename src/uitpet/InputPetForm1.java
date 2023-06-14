@@ -38,6 +38,7 @@ public class InputPetForm1 extends javax.swing.JFrame {
         dateField.setText(pDate);
         priceField.setText(Integer.toString(pPrice));
         this.row = row;
+        title.setText("Cập nhật thú cưng");
         isUpdate = true;
     }
     
@@ -72,7 +73,7 @@ public class InputPetForm1 extends javax.swing.JFrame {
         dateField = new javax.swing.JFormattedTextField();
         codeField = new javax.swing.JTextField();
         jPanel2 = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
+        title = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -130,9 +131,7 @@ public class InputPetForm1 extends javax.swing.JFrame {
                     .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(65, 65, 65)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(inputPetSubmitBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 455, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(224, Short.MAX_VALUE))
+                    .addComponent(inputPetSubmitBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 455, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(priceField, javax.swing.GroupLayout.Alignment.TRAILING)
@@ -144,15 +143,11 @@ public class InputPetForm1 extends javax.swing.JFrame {
                             .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGap(30, 30, 30)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(dateField)
-                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(nameField, javax.swing.GroupLayout.PREFERRED_SIZE, 222, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 253, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))))
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(nameField, javax.swing.GroupLayout.DEFAULT_SIZE, 222, Short.MAX_VALUE)
+                            .addComponent(dateField)
+                            .addComponent(jScrollPane1))))
+                .addContainerGap(55, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -188,11 +183,11 @@ public class InputPetForm1 extends javax.swing.JFrame {
         jPanel2.setBackground(new java.awt.Color(51, 255, 255));
         jPanel2.setForeground(new java.awt.Color(255, 255, 255));
 
-        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
-        jLabel1.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel1.setText("THÊM THÚ CƯNG");
-        jLabel1.setHorizontalTextPosition(javax.swing.SwingConstants.LEADING);
+        title.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        title.setForeground(new java.awt.Color(255, 255, 255));
+        title.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        title.setText("THÊM THÚ CƯNG");
+        title.setHorizontalTextPosition(javax.swing.SwingConstants.LEADING);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -200,14 +195,14 @@ public class InputPetForm1 extends javax.swing.JFrame {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(339, 339, 339)
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 219, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(title, javax.swing.GroupLayout.PREFERRED_SIZE, 219, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(365, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(23, 23, 23)
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(title, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(26, Short.MAX_VALUE))
         );
 
@@ -307,6 +302,7 @@ public class InputPetForm1 extends javax.swing.JFrame {
             valid = true;
         }
         ManagerForm.updatePetList();
+        ManagerForm.updateStatistic();
     }//GEN-LAST:event_inputPetSubmitBtnActionPerformed
 
 
@@ -356,7 +352,6 @@ public class InputPetForm1 extends javax.swing.JFrame {
     private javax.swing.JTextField codeField;
     private javax.swing.JFormattedTextField dateField;
     private javax.swing.JButton inputPetSubmitBtn;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -369,6 +364,7 @@ public class InputPetForm1 extends javax.swing.JFrame {
     private javax.swing.JTextField nameField;
     private javax.swing.JTextArea noteField;
     private javax.swing.JTextField priceField;
+    private javax.swing.JLabel title;
     private javax.swing.JTextField typeField;
     // End of variables declaration//GEN-END:variables
 }

@@ -47,10 +47,7 @@
                   </Group>
                   <EmptySpace min="-2" pref="65" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="102" alignment="0" attributes="0">
-                          <Component id="inputPetSubmitBtn" min="-2" pref="455" max="-2" attributes="0"/>
-                          <EmptySpace pref="224" max="32767" attributes="0"/>
-                      </Group>
+                      <Component id="inputPetSubmitBtn" alignment="0" min="-2" pref="455" max="-2" attributes="0"/>
                       <Group type="102" alignment="0" attributes="0">
                           <Group type="103" groupAlignment="0" max="-2" attributes="0">
                               <Component id="priceField" alignment="1" max="32767" attributes="0"/>
@@ -64,21 +61,14 @@
                               <Component id="jLabel5" alignment="1" max="32767" attributes="0"/>
                           </Group>
                           <EmptySpace min="-2" pref="30" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="102" attributes="0">
-                                  <Component id="dateField" max="32767" attributes="0"/>
-                                  <EmptySpace max="32767" attributes="0"/>
-                              </Group>
-                              <Group type="102" attributes="0">
-                                  <Group type="103" groupAlignment="0" attributes="0">
-                                      <Component id="nameField" min="-2" pref="222" max="-2" attributes="0"/>
-                                      <Component id="jScrollPane1" min="-2" pref="253" max="-2" attributes="0"/>
-                                  </Group>
-                                  <EmptySpace max="32767" attributes="0"/>
-                              </Group>
+                          <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                              <Component id="nameField" pref="222" max="32767" attributes="0"/>
+                              <Component id="dateField" max="32767" attributes="0"/>
+                              <Component id="jScrollPane1" alignment="0" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                   </Group>
+                  <EmptySpace pref="55" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -240,7 +230,7 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace min="-2" pref="339" max="-2" attributes="0"/>
-                  <Component id="jLabel1" min="-2" pref="219" max="-2" attributes="0"/>
+                  <Component id="title" min="-2" pref="219" max="-2" attributes="0"/>
                   <EmptySpace pref="365" max="32767" attributes="0"/>
               </Group>
           </Group>
@@ -249,14 +239,14 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace min="-2" pref="23" max="-2" attributes="0"/>
-                  <Component id="jLabel1" min="-2" pref="51" max="-2" attributes="0"/>
+                  <Component id="title" min="-2" pref="51" max="-2" attributes="0"/>
                   <EmptySpace pref="26" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
       </Layout>
       <SubComponents>
-        <Component class="javax.swing.JLabel" name="jLabel1">
+        <Component class="javax.swing.JLabel" name="title">
           <Properties>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
               <Font name="Segoe UI" size="24" style="1"/>
