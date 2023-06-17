@@ -4,6 +4,8 @@
  */
 package uitpet;
 
+import javax.swing.JFrame;
+
 /**
  *
  * @author Quoc Bao
@@ -14,6 +16,7 @@ public class InvoiceDetailView extends javax.swing.JFrame {
      * Creates new form InvoiceDetailView
      */
     public InvoiceDetailView() {
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         initComponents();
     }
 

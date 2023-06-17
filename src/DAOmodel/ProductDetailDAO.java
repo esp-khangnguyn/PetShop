@@ -17,6 +17,40 @@ public class ProductDetailDAO implements DAOInterface<ProductDetail>{
     public static ProductDetailDAO getInstance(){
         return new ProductDetailDAO();
     }
+    
+    public static ArrayList<ProductDetail> getProductListByID(String str){
+        ArrayList<ProductDetail> petDetailList = new ArrayList<>();
+        try {
+            Connection con = JDBCUtil.getConnection();
+            
+            String sql = "SELECT * FROM PRODUCT_DETAIL WHERE INVOICE_CODE=?";
+            
+            PreparedStatement pst = con.prepareStatement(sql);
+            pst.setString(1, str);
+           
+      
+            ResultSet rs = pst.executeQuery();
+            System.out.println("You have done: " + sql);
+            
+            while(rs.next()){
+                String inCode = rs.getString("INVOICE_CODE");
+                String petCode = rs.getString("PRODUCT_CODE");
+                String petName = rs.getString("PRODUCT_NAME");
+                int price = rs.getInt("PRICE");
+                int quantity = rs.getInt("QUANTITY");
+                String detailId =  rs.getString("DETAIL_ID");
+                
+                ProductDetail petDetail = new ProductDetail(detailId, inCode, petCode, petName, price, quantity);
+                petDetailList.add(petDetail);
+            }
+            JDBCUtil.closeConnection(con);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Cannot select by Id! Please try again!");
+        }
+       return petDetailList;
+    }
+    
     @Override
     public int insert(ProductDetail t) {
         int result = 0;

@@ -6,6 +6,7 @@ package uitpet;
 
 import ClassModel.Service;
 import DAOmodel.ServiceDAO;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
@@ -28,6 +29,7 @@ public class InputServiceForm extends javax.swing.JFrame {
     }
     
     public InputServiceForm( String sCode, String sName, String sNote,String sPrice, int row) {
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         initComponents();
         serviceCode.setText(sCode);
         serviceName.setText(sName);
@@ -46,6 +48,7 @@ public class InputServiceForm extends javax.swing.JFrame {
     
     
     public InputServiceForm() {
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         initComponents();
     }
 

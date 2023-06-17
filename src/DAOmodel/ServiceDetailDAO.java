@@ -20,6 +20,41 @@ public class ServiceDetailDAO implements DAOInterface<ServiceDetail>{
     public static ServiceDetailDAO getInstance(){
         return new ServiceDetailDAO();
     }
+    
+    
+     public static ArrayList<ServiceDetail> getServiceListByID(String str){
+        ArrayList<ServiceDetail> petDetailList = new ArrayList<>();
+        try {
+            Connection con = JDBCUtil.getConnection();
+            
+            String sql = "SELECT * FROM SERVICE_DETAIL WHERE INVOICE_CODE=?";
+            
+            PreparedStatement pst = con.prepareStatement(sql);
+            pst.setString(1, str);
+           
+      
+            ResultSet rs = pst.executeQuery();
+            System.out.println("You have done: " + sql);
+            
+            while(rs.next()){
+                String inCode = rs.getString("INVOICE_CODE");
+                String petCode = rs.getString("SERVICE_CODE");
+                String petName = rs.getString("SERVICE_NAME");
+                int price = rs.getInt("PRICE");
+                int quantity = rs.getInt("QUANTITY");
+                String detailId =  rs.getString("DETAIL_ID");
+                
+                ServiceDetail petDetail = new ServiceDetail(detailId, inCode, petCode, petName, price, quantity);
+                petDetailList.add(petDetail);
+            }
+            JDBCUtil.closeConnection(con);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Cannot select by Id! Please try again!");
+        }
+       return petDetailList;
+    }
+    
     @Override
     public int insert(ServiceDetail t) {
         int result = 0;

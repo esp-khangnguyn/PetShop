@@ -6,6 +6,7 @@ package uitpet;
 
 import ClassModel.Customer;
 import DAOmodel.CustomerDAO;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
@@ -20,11 +21,13 @@ public class InputCustomerForm extends javax.swing.JFrame {
     String code ="", email ="", phone="" , name="" ,address="",bd="";
     boolean isUpdate = false;
     int row = -1;
+    
     public Object[] getRow() {
         return new Object[] { code,phone,name, address,email,bd};
     }
     
     public InputCustomerForm(String cCode, String cPhone, String cName, String cAddress, String cEmail, String cBd,int row) {
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         initComponents();
 //        codeField.setText(cCode);
         code = cCode;
@@ -41,6 +44,7 @@ public class InputCustomerForm extends javax.swing.JFrame {
     
     
     public InputCustomerForm() {
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         initComponents();
     }
 

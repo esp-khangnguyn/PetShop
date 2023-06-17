@@ -746,6 +746,8 @@ public class ManagerForm extends javax.swing.JFrame {
         jPanel22 = new javax.swing.JPanel();
         searchInvoice = new javax.swing.JTextField();
         searchInvoiceBtn = new javax.swing.JButton();
+        jPanel2 = new javax.swing.JPanel();
+        jButton1 = new javax.swing.JButton();
         jPanel19 = new javax.swing.JPanel();
         jScrollPane12 = new javax.swing.JScrollPane();
         cusFav = new javax.swing.JTable();
@@ -985,10 +987,12 @@ public class ManagerForm extends javax.swing.JFrame {
                         .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jLabel10, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 260, Short.MAX_VALUE)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 234, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(cusName, javax.swing.GroupLayout.PREFERRED_SIZE, 233, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(curDay, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, 260, Short.MAX_VALUE))
+                            .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, 260, Short.MAX_VALUE)
+                            .addGroup(jPanel7Layout.createSequentialGroup()
+                                .addGap(6, 6, 6)
+                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 234, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addGap(52, 52, 52))
                     .addGroup(jPanel7Layout.createSequentialGroup()
                         .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
@@ -1134,7 +1138,7 @@ public class ManagerForm extends javax.swing.JFrame {
                     .addComponent(jButton19, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButton21, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButton20, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(80, Short.MAX_VALUE))
+                .addContainerGap(81, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
@@ -1145,7 +1149,7 @@ public class ManagerForm extends javax.swing.JFrame {
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, 488, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel8, javax.swing.GroupLayout.DEFAULT_SIZE, 428, Short.MAX_VALUE)
+                .addComponent(jPanel8, javax.swing.GroupLayout.DEFAULT_SIZE, 413, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel5Layout.setVerticalGroup(
@@ -1221,7 +1225,7 @@ public class ManagerForm extends javax.swing.JFrame {
                     .addComponent(searchBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(jPanel10Layout.createSequentialGroup()
                         .addComponent(jLabel16, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addGap(0, 11, Short.MAX_VALUE)))
                 .addContainerGap())
         );
 
@@ -1795,7 +1799,7 @@ public class ManagerForm extends javax.swing.JFrame {
                 .addGroup(jPanel23Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(searchStaField, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(searchSerBtn))
-                .addGap(0, 0, Short.MAX_VALUE))
+                .addGap(0, 21, Short.MAX_VALUE))
         );
 
         jPanel9.add(jPanel23, java.awt.BorderLayout.PAGE_START);
@@ -1846,14 +1850,14 @@ public class ManagerForm extends javax.swing.JFrame {
                 .addGroup(jPanel29Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(searchPetBtn)
                     .addComponent(searchPet, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(0, 10, Short.MAX_VALUE))
+                .addGap(0, 11, Short.MAX_VALUE))
         );
 
         petS.add(jPanel29, java.awt.BorderLayout.PAGE_START);
 
         searchSer.addTab("Thú cưng", petS);
 
-        jPanel18.setLayout(new java.awt.BorderLayout());
+        jPanel18.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         invoiceListTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -1866,7 +1870,7 @@ public class ManagerForm extends javax.swing.JFrame {
         invoiceListTable.setFillsViewportHeight(true);
         jScrollPane11.setViewportView(invoiceListTable);
 
-        jPanel18.add(jScrollPane11, java.awt.BorderLayout.CENTER);
+        jPanel18.add(jScrollPane11, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 45, 913, 510));
 
         jPanel22.setBackground(new java.awt.Color(51, 255, 255));
         jPanel22.setPreferredSize(new java.awt.Dimension(908, 45));
@@ -1906,7 +1910,35 @@ public class ManagerForm extends javax.swing.JFrame {
                 .addGap(76, 76, 76))
         );
 
-        jPanel18.add(jPanel22, java.awt.BorderLayout.PAGE_START);
+        jPanel18.add(jPanel22, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 913, -1));
+
+        jButton1.setBackground(new java.awt.Color(153, 255, 153));
+        jButton1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jButton1.setText("Xem chi tiết hóa đơn");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addContainerGap(707, Short.MAX_VALUE)
+                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addContainerGap(114, Short.MAX_VALUE)
+                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(21, 21, 21))
+        );
+
+        jPanel18.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 472, -1, 190));
 
         searchSer.addTab("Hóa đơn", jPanel18);
 
@@ -2836,6 +2868,15 @@ public class ManagerForm extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_searchBtnEmpManActionPerformed
 
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+        int index = invoiceListTable.getSelectedRow();
+        String code = invoiceListTable.getValueAt(index,0).toString();
+        ViewInvoiceDetail vid = new ViewInvoiceDetail(code);
+        
+        vid.setVisible(true);
+    }//GEN-LAST:event_jButton1ActionPerformed
+
     public static void replaceRowToServiceTable(Object[] data,int row) {
         DefaultTableModel modelservice = (DefaultTableModel) serviceTable.getModel(); 
         for (int i= 0;i < 4; i++) {
@@ -2944,6 +2985,7 @@ public class ManagerForm extends javax.swing.JFrame {
     private javax.swing.JLabel invoiceBtn;
     private javax.swing.JPanel invoiceLayout;
     private static javax.swing.JTable invoiceListTable;
+    private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton10;
     private javax.swing.JButton jButton11;
     private javax.swing.JButton jButton12;
@@ -2987,6 +3029,7 @@ public class ManagerForm extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel17;
     private javax.swing.JPanel jPanel18;
     private javax.swing.JPanel jPanel19;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel20;
     private javax.swing.JPanel jPanel21;
     private javax.swing.JPanel jPanel22;

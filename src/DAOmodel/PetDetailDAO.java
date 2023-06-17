@@ -18,7 +18,8 @@ public class PetDetailDAO implements DAOInterface<PetDetail>{
     public static PetDetailDAO getInstance(){
         return new PetDetailDAO();
     }
-        public static ArrayList<PetDetail> findServiceByIdOrName(String str){
+    
+    public static ArrayList<PetDetail> findServiceByIdOrName(String str){
         ArrayList<PetDetail> petDetailList = new ArrayList<>();
         try {
             Connection con = JDBCUtil.getConnection();
@@ -31,6 +32,39 @@ public class PetDetailDAO implements DAOInterface<PetDetail>{
             pst.setString(2, searchValue);
            
             
+            ResultSet rs = pst.executeQuery();
+            System.out.println("You have done: " + sql);
+            
+            while(rs.next()){
+                String inCode = rs.getString("INVOICE_CODE");
+                String petCode = rs.getString("PET_CODE");
+                String petName = rs.getString("PET_NAME");
+                int price = rs.getInt("PRICE");
+                int quantity = rs.getInt("QUANTITY");
+                String detailId =  rs.getString("DETAIL_ID");
+                
+                PetDetail petDetail = new PetDetail(detailId, inCode, petCode, petName, price, quantity);
+                petDetailList.add(petDetail);
+            }
+            JDBCUtil.closeConnection(con);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Cannot select by Id! Please try again!");
+        }
+       return petDetailList;
+    }
+    
+    public static ArrayList<PetDetail> getPetListByID(String str){
+        ArrayList<PetDetail> petDetailList = new ArrayList<>();
+        try {
+            Connection con = JDBCUtil.getConnection();
+            
+            String sql = "SELECT * FROM PET_DETAIL WHERE INVOICE_CODE=?";
+            
+            PreparedStatement pst = con.prepareStatement(sql);
+            pst.setString(1, str);
+           
+      
             ResultSet rs = pst.executeQuery();
             System.out.println("You have done: " + sql);
             

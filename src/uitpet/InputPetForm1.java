@@ -8,6 +8,7 @@ import ClassModel.Pet;
 import ClassModel.Product;
 import DAOmodel.PetDAO;
 import DAOmodel.ProductDAO;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
@@ -30,6 +31,7 @@ public class InputPetForm1 extends javax.swing.JFrame {
     }
     
     public InputPetForm1(String pCode, String pName,String pType, String pNote, String pDate,int pPrice, int row) {
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         initComponents();
         codeField.setText(pCode);
         nameField.setText(pName);
@@ -45,6 +47,7 @@ public class InputPetForm1 extends javax.swing.JFrame {
     
     
     public InputPetForm1() {
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         initComponents();
     }
 

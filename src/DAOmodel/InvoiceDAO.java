@@ -55,6 +55,39 @@ public class InvoiceDAO implements DAOInterface<Invoice>{
        return invoiceList;
     }
     
+    public static Invoice getInvoiceByID(String str){
+        Invoice invoice = null;
+        try {
+            Connection con = JDBCUtil.getConnection();
+            
+            String sql = "SELECT * FROM INVOICE WHERE INVOICE_CODE = ?";
+ 
+            PreparedStatement pst = con.prepareStatement(sql);
+            pst.setString(1, str);       
+            ResultSet rs = pst.executeQuery();
+            System.out.println("You have done: " + sql);
+            
+            while(rs.next()){
+                String inCode = rs.getString("INVOICE_CODE");
+                String createDate = rs.getString("INVOICE_CREATION_DATE");
+                int total = rs.getInt("TOTAL_INVOICE_AMOUNT");
+                String cusCode = rs.getString("CUSTOMER_CODE");
+                String empCode = rs.getString("EMPLOYEE_CODE");
+                String cusName = rs.getString("CUSTOMER_NAME");
+                String  empName= rs.getString("EMPLOYEE_NAME");
+                String phone = rs.getString("PHONE_NUMBER");
+                
+                invoice = new Invoice(inCode, createDate, total, cusCode, empCode, cusName, empName, phone);
+
+            }
+            JDBCUtil.closeConnection(con);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Cannot select by Id! Please try again!");
+        }
+       return invoice;
+    }
+    
     
     @Override
     public int insert(Invoice t) {

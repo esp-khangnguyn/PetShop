@@ -14,9 +14,9 @@ public class JDBCUtil {
         Connection connect = null;
         try {
             DriverManager.registerDriver (new oracle.jdbc.driver.OracleDriver());
-            String url = "jdbc:oracle:thin:@localhost:1521:orcl";
-            String user = "C##UITPET";
-            String password = "21521849";
+            String url = "jdbc:oracle:thin:@localhost:1521:orclnew";
+            String user = "khang";
+            String password = "123456";
             connect = DriverManager.getConnection(url, user, password);
             System.out.println("Connect successfully!");
         } catch (Exception e) {

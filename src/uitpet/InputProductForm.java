@@ -7,6 +7,7 @@ package uitpet;
 import ClassModel.Product;
 import DAOmodel.ProductDAO;
 import java.util.ArrayList;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
@@ -30,6 +31,7 @@ public class InputProductForm extends javax.swing.JFrame {
     }
     
     public InputProductForm(String pCode, String pName,int pQuantity, long inPrice, long outPrice, String pNote, String date,int row) {
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         initComponents();
         codeField.setText(pCode);
         nameField.setText(pName);
@@ -46,6 +48,7 @@ public class InputProductForm extends javax.swing.JFrame {
     
     
     public InputProductForm() {
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         initComponents();
     }
 
