@@ -253,37 +253,37 @@ public class InputProductForm extends javax.swing.JFrame {
         note = noteField.getText();
 //        Kiểm tra input
         if (code.equals("")){
-            sb.append("Ma san pham is empty!\n");
+//            sb.append("Ma san pham is empty!\n");
             valid = false;
         }
         if (name.equals("")){
-            sb.append("Ten san pham is empty!\n");
+//            sb.append("Ten san pham is empty!\n");
             valid = false;
         }
         if (stringPrice.equals("")){
-            sb.append("Gia ban is empty!\n");
+//            sb.append("Gia ban is empty!\n");
             valid = false;
         }
         if (stringImportPrice.equals("")){
-            sb.append("Gia nhap is empty!\n");
+//            sb.append("Gia nhap is empty!\n");
             valid = false;
         }
         if (quantity <= 0){
             valid = false;
-            SwingUtilities.invokeLater(() -> {
-            JOptionPane.showMessageDialog(this, "So luong must larger than 0!", "Invalidation", JOptionPane.ERROR_MESSAGE);
-        });
+//            SwingUtilities.invokeLater(() -> {
+//            JOptionPane.showMessageDialog(this, "So luong must larger than 0!", "Invalidation", JOptionPane.ERROR_MESSAGE);
+//        });
 
         }
         if (date.equals("")){
             valid = false;
-            sb.append("Ngay nhap is empty!\n");
+//            sb.append("Ngay nhap is empty!\n");
         }       
-        if (sb.length() > 0){
-                    SwingUtilities.invokeLater(() -> {
-            JOptionPane.showMessageDialog(this, sb.toString(), "Invalidation", JOptionPane.ERROR_MESSAGE);
-        });
-        }
+//        if (sb.length() > 0){
+//                    SwingUtilities.invokeLater(() -> {
+//            JOptionPane.showMessageDialog(this, sb.toString(), "Invalidation", JOptionPane.ERROR_MESSAGE);
+//        });
+//        }
 //        Ep kieu
         
         if (valid == true){
@@ -331,6 +331,7 @@ public class InputProductForm extends javax.swing.JFrame {
             dispose();
         }
         else {
+            JOptionPane.showMessageDialog(this, "Vui lòng nhập đầy đủ thông tin", "Invalidation", JOptionPane.ERROR_MESSAGE);
             valid = true;
         }
         

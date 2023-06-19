@@ -33,6 +33,7 @@ public class RegisterFrame extends javax.swing.JFrame {
     
     public RegisterFrame(String sCode, String sName, String sBd,String sAddress, String sEmail,String sPhone,String sDate, String sSalary, String sRole, String sUser, String sPw, String sRePw, int row) {
         initComponents();
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         codeField.setText(sCode);
         nameField.setText(sName);
         bdField.setText(sBd);
@@ -371,47 +372,47 @@ public class RegisterFrame extends javax.swing.JFrame {
         StringBuilder sb = new StringBuilder();
         if (code.equals("")){
             valid = false;
-            sb.append("Ma nhan vien is empty!\n");
+//            sb.append("Ma nhan vien is empty!\n");
         }
         if (name.equals("")){
             valid = false;
-            sb.append("Ten nhan vien is empty!\n");
+//            sb.append("Ten nhan vien is empty!\n");
         }
         if (bd.equals("")){
             valid = false;
-            sb.append("Ngay sinh nhan vien is empty!\n");
+//            sb.append("Ngay sinh nhan vien is empty!\n");
         }
         if (address.equals("")){
             valid = false;
-            sb.append("Dia chi is empty!\n");
+//            sb.append("Dia chi is empty!\n");
         }
         if (email.equals("")){
             valid = false;
-            sb.append("Email is empty!\n");
+//            sb.append("Email is empty!\n");
         }
         if (phone.equals("")){
             valid = false;
-            sb.append("SDT is empty!\n");
+//            sb.append("SDT is empty!\n");
         }
         if (date.equals("")){
             valid = false;
-            sb.append("Ngay vao lam is empty!\n");
+//            sb.append("Ngay vao lam is empty!\n");
         }
         if (sSalary.equals("")){
             valid = false;
-            sb.append("Luong nhan vien is empty!\n");
+//            sb.append("Luong nhan vien is empty!\n");
         }
         if (user.equals("")){
             valid = false;
-            sb.append("Tai khoan is empty!\n");
+//            sb.append("Tai khoan is empty!\n");
         }
         if (pw.equals("")){
             valid = false;
-            sb.append("Mat khau is empty!\n");
+//            sb.append("Mat khau is empty!\n");
         }
         if (rePw.equals("")){
             valid = false;
-            sb.append("Nhap lai mat khau is empty!\n");
+//            sb.append("Nhap lai mat khau is empty!\n");
         }
         if (!(rePw.equals(pw))){
             SwingUtilities.invokeLater(() -> {
@@ -419,11 +420,11 @@ public class RegisterFrame extends javax.swing.JFrame {
         });
 
         }
-        if (sb.length() > 0){
-                    SwingUtilities.invokeLater(() -> {
-            JOptionPane.showMessageDialog(this, sb.toString(), "Invalidation", JOptionPane.ERROR_MESSAGE);
-        });
-        }
+//        if (sb.length() > 0){
+//                    SwingUtilities.invokeLater(() -> {
+//            JOptionPane.showMessageDialog(this, sb.toString(), "Invalidation", JOptionPane.ERROR_MESSAGE);
+//        });
+//        }
 //        Tạo id tự động cho Account
         if (valid) {
             
@@ -470,13 +471,13 @@ public class RegisterFrame extends javax.swing.JFrame {
                     ManagerForm.updateEmpTable();
                 }
             }
-            dispose();
-        }
-        } else {
-            valid = true;
         }
         dispose();
-       
+        } else {
+            JOptionPane.showMessageDialog(this, "Vui lòng nhập đầy đủ thông tin", "Invalidation", JOptionPane.ERROR_MESSAGE);
+            valid = true;
+        }
+
     }//GEN-LAST:event_submitEmpBtnActionPerformed
 
     private void staffActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_staffActionPerformed

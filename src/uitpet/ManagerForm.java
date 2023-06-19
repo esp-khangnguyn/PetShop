@@ -2296,20 +2296,21 @@ public class ManagerForm extends javax.swing.JFrame {
         String cName = cusName.getText();
         String cPhone = cusPhone.getText();
         if (cName.equals("")) {
-            sb.append("Ten khach hang trong!\n");
             valid = false;
         }
         if (cPhone.equals("")) {
-            sb.append("SDT khach hang trong!\n");
             valid = false;
         }
-        if (sb.length() > 0){
-                    SwingUtilities.invokeLater(() -> {
-            JOptionPane.showMessageDialog(this, sb.toString(), "Invalidation", JOptionPane.ERROR_MESSAGE);
-                    
-
-                    });
+        
+        if (productTable.getRowCount() == 0) {
+            valid = false;
         }
+//        if (sb.length() > 0){
+//                    SwingUtilities.invokeLater(() -> {
+//            JOptionPane.showMessageDialog(this, "Vui lòng điền đầy đủ thông tin", "Invalidation", JOptionPane.ERROR_MESSAGE);
+//                    
+//                    });
+//        }
         
         if (valid) {
 
@@ -2330,9 +2331,11 @@ public class ManagerForm extends javax.swing.JFrame {
                     createServiceDeTail(iCode, pCode, pName, price, quan);
                 }
             }
+            JOptionPane.showMessageDialog(this, "Mua thành công");
             updateProductTable();
             updateStatistic();
         } else {
+            JOptionPane.showMessageDialog(this, "Vui lòng điền đầy đủ ", "Invalidation", JOptionPane.ERROR_MESSAGE);
             valid = true;
         }
         updateStatistic();

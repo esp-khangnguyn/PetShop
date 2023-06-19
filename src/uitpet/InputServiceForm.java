@@ -211,21 +211,21 @@ public class InputServiceForm extends javax.swing.JFrame {
         StringBuilder sb = new StringBuilder();
         if (code.equals("")){
             valid = false;
-            sb.append("Ma dich vu is empty!\n");
+//            sb.append("Ma dich vu is empty!\n");
         }
         if (name.equals("")){
-            sb.append("Ten dich vu is empty!\n");
+//            sb.append("Ten dich vu is empty!\n");
             valid = false;
         }
         if (sPrice.equals("")){
-            sb.append("Gia dich vu is empty!\n");
+//            sb.append("Gia dich vu is empty!\n");
             valid = false;
         }
-        if (sb.length() > 0){
-                    SwingUtilities.invokeLater(() -> {
-            JOptionPane.showMessageDialog(this, sb.toString(), "Invalidation", JOptionPane.ERROR_MESSAGE);
-        });
-        }
+//        if (sb.length() > 0){
+//                    SwingUtilities.invokeLater(() -> {
+//            JOptionPane.showMessageDialog(this, sb.toString(), "Invalidation", JOptionPane.ERROR_MESSAGE);
+//        });
+//        }
         if (valid){
             price = Integer.parseInt(sPrice);
             Service service = new Service(code, name, note, price);
@@ -257,6 +257,7 @@ public class InputServiceForm extends javax.swing.JFrame {
 
         } 
         else {
+            JOptionPane.showMessageDialog(this, "Vui lòng nhập đầy đủ thông tin", "Invalidation", JOptionPane.ERROR_MESSAGE);
             valid = true;
         }
         ManagerForm.updateStatistic();
