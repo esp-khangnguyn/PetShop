@@ -2335,7 +2335,7 @@ public class ManagerForm extends javax.swing.JFrame {
             updateProductTable();
             updateStatistic();
         } else {
-            JOptionPane.showMessageDialog(this, "Vui lòng điền đầy đủ ", "Invalidation", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Vui lòng điền thông tin đầy đủ ", "Invalidation", JOptionPane.ERROR_MESSAGE);
             valid = true;
         }
         updateStatistic();
@@ -2874,6 +2874,9 @@ public class ManagerForm extends javax.swing.JFrame {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
         int index = invoiceListTable.getSelectedRow();
+        if (index == -1) {
+            return;
+        }
         String code = invoiceListTable.getValueAt(index,0).toString();
         ViewInvoiceDetail vid = new ViewInvoiceDetail(code);
         

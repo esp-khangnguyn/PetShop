@@ -163,29 +163,47 @@ public class LoginFrame extends javax.swing.JFrame {
 
     private void loginButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loginButtonActionPerformed
         // TODO add your handling code here:
+        boolean valid = true;
         String userName = userField.getText();
         String userPass = new String(pwField.getPassword());
         StringBuilder sb = new StringBuilder();
         if(userName.equals("")){
-            sb.append("Vui lòng điền tài khoản!\n");
+//            sb.append("Vui lòng điền tài khoản!\n");
+            valid = false;
         }
         if (userPass.equals("")){
-            sb.append("Vui lòng điền mật khẩu!\n");
+//            sb.append("Vui lòng điền mật khẩu!\n");
+              valid = false;
         }
-        if (sb.length() > 0){
-            JOptionPane.showMessageDialog(this, sb.toString(), "Thông báo", JOptionPane.ERROR_MESSAGE);
-            return;
+//        if (sb.length() > 0){
+//            JOptionPane.showMessageDialog(this, sb.toString(), "Thông báo", JOptionPane.ERROR_MESSAGE);
+//            return;
+//        }
+        if (valid) {
+            boolean accountCheck = AccountDAO.getInstance().checkLogin(userName, userPass);
+            if (accountCheck == true){
+                JOptionPane.showMessageDialog(this, "Đăng nhập thành công!");
+                ManagerForm managerForm = new ManagerForm(userName);
+                managerForm.setVisible(true);
+                dispose();
+            }
+            else {
+                JOptionPane.showMessageDialog(this, "Tên đăng nhập hoặc mật khẩu không chính xác", "Thất bại", JOptionPane.ERROR_MESSAGE);
+            }
+        } else {
+            valid = true;
+            JOptionPane.showMessageDialog(this, "Vui lòng điền đủ thông tin tài khoản hoặc mật khẩu", "Thông báo", JOptionPane.ERROR_MESSAGE);
         }
-        boolean accountCheck = AccountDAO.getInstance().checkLogin(userName, userPass);
-        if (accountCheck == true){
-            JOptionPane.showMessageDialog(this, "Đăng nhập thành công!");
-            ManagerForm managerForm = new ManagerForm(userName);
-            managerForm.setVisible(true);
-            dispose();
-        }
-        else {
-            JOptionPane.showMessageDialog(this, "Tên đăng nhập hoặc mật khẩu không chính xác", "Thất bại", JOptionPane.ERROR_MESSAGE);
-        }
+//        boolean accountCheck = AccountDAO.getInstance().checkLogin(userName, userPass);
+//        if (accountCheck == true){
+//            JOptionPane.showMessageDialog(this, "Đăng nhập thành công!");
+//            ManagerForm managerForm = new ManagerForm(userName);
+//            managerForm.setVisible(true);
+//            dispose();
+//        }
+//        else {
+//            JOptionPane.showMessageDialog(this, "Tên đăng nhập hoặc mật khẩu không chính xác", "Thất bại", JOptionPane.ERROR_MESSAGE);
+//        }
 //        ArrayList<Account> accountList = AccountDAO.getInstance().SelectAll();
 //        for (Account acc : accountList){
 //            if (acc.getAccountName().equals(userName) && acc.getAccountPassword().equals(userPass)){

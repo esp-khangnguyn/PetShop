@@ -226,6 +226,10 @@ public class InputServiceForm extends javax.swing.JFrame {
 //            JOptionPane.showMessageDialog(this, sb.toString(), "Invalidation", JOptionPane.ERROR_MESSAGE);
 //        });
 //        }
+        if (!valid) {
+            JOptionPane.showMessageDialog(this, "Vui lòng nhập đầy đủ thông tin", "Invalidation", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
         if (valid){
             price = Integer.parseInt(sPrice);
             Service service = new Service(code, name, note, price);
@@ -256,8 +260,7 @@ public class InputServiceForm extends javax.swing.JFrame {
         }
 
         } 
-        else {
-            JOptionPane.showMessageDialog(this, "Vui lòng nhập đầy đủ thông tin", "Invalidation", JOptionPane.ERROR_MESSAGE);
+        else {          
             valid = true;
         }
         ManagerForm.updateStatistic();

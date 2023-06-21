@@ -258,10 +258,14 @@ public class InputPetForm1 extends javax.swing.JFrame {
             valid = false;
             sb.append("Ngay nhap is empty!\n");
         }       
-        if (sb.length() > 0){
-                    SwingUtilities.invokeLater(() -> {
-            JOptionPane.showMessageDialog(this, sb.toString(), "Invalidation", JOptionPane.ERROR_MESSAGE);
-        });
+//        if (sb.length() > 0){
+//            SwingUtilities.invokeLater(() -> {
+//                JOptionPane.showMessageDialog(this, sb.toString(), "Invalidation", JOptionPane.ERROR_MESSAGE);
+//            });
+//        }
+        if (!valid) {
+            JOptionPane.showMessageDialog(this, "Vui lòng điền thông tin đầy đủ", "Invalidation", JOptionPane.ERROR_MESSAGE);
+            return;
         }
 //        Ep kieu
         System.out.println(type);
@@ -299,13 +303,13 @@ public class InputPetForm1 extends javax.swing.JFrame {
                      ManagerForm.updateProductTable();
                 }
             }
-            dispose();
         }
         else {
             valid = true;
         }
         ManagerForm.updatePetList();
         ManagerForm.updateStatistic();
+        dispose();
     }//GEN-LAST:event_inputPetSubmitBtnActionPerformed
 
 

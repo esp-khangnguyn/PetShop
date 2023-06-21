@@ -205,7 +205,7 @@ public class InputCustomerForm extends javax.swing.JFrame {
     }//GEN-LAST:event_emailFieldActionPerformed
 
     private void submitCusBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_submitCusBtnActionPerformed
-        
+        boolean valid = true;
         name = nameField1.getText();
         phone = phoneField.getText();
         address = addressField.getText();
@@ -218,22 +218,26 @@ public class InputCustomerForm extends javax.swing.JFrame {
 //            sb.append("Ma khach hang is empty!");
 //        }
         if (name.equals("")){
-            sb.append("Ten khach hang is empty!\n");
+//            sb.append("Ten khach hang is empty!\n");
+            valid = false;
         }
         if (bd.equals("")){
-            sb.append("Ngay sinh khach hang is empty!\n");
+//            sb.append("Ngay sinh khach hang is empty!\n");
+            valid = false;
         }
         if (address.equals("")){
-            sb.append("Dia chi khach hang is empty!\n");
+//            sb.append("Dia chi khach hang is empty!\n");
+            valid = false;
         }
         if (phone.equals("")){
-            sb.append("SDT khach hang is empty!\n");
+//            sb.append("SDT khach hang is empty!\n");
+            valid = false;
         }
         if (email.equals("")){
-            sb.append("Email khach hang is empty!\n");
+//            sb.append("Email khach hang is empty!\n");
         }
-        if (sb.length() > 0){
-            JOptionPane.showMessageDialog(this, sb.toString(), "Invalidation", JOptionPane.ERROR_MESSAGE);
+        if (!valid){
+            JOptionPane.showMessageDialog(this, "Vui lòng điển thông tin đầy đủ", "Invalidation", JOptionPane.ERROR_MESSAGE);
             return;
         }
        
