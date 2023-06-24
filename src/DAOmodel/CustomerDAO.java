@@ -54,6 +54,41 @@ public class CustomerDAO implements DAOInterface<Customer>{
         }
        return customerList;
     }
+    
+    public static ArrayList<Customer>getCusByPhone(String str){
+        ArrayList<Customer> customerList = new ArrayList<>();
+        try {
+            Connection con = JDBCUtil.getConnection();
+            
+            String sql = "SELECT * FROM CUSTOMER WHERE PHONE_NUMBER = ?";
+            
+            PreparedStatement pst = con.prepareStatement(sql);
+            pst.setString(1, str);
+            
+            ResultSet rs = pst.executeQuery();
+            System.out.println("You have done: " + sql);
+            
+            while(rs.next()){
+                String code = rs.getString("CUSTOMER_CODE");
+                String name = rs.getString("CUSTOMER_NAME");
+                String dateOfBirth = rs.getString("DATE_OF_BIRTH");
+                String address = rs.getString("ADDRESS");
+                String email = rs.getString("EMAIL");
+                String phoneNumber = rs.getString("PHONE_NUMBER");
+                String notes = rs.getString("NOTES");
+                int inCount = rs.getInt("INVOICE_COUNT");
+                Customer customer = new Customer(code, name, dateOfBirth, address, email, phoneNumber, notes);
+                customerList.add(customer);
+            }
+            JDBCUtil.closeConnection(con);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Cannot select by Id! Please try again!");
+        }
+       return customerList;
+    }
+    
+    
 
     public static ArrayList<Customer> SelectAllFav() {
         ArrayList<Customer> customerList = new ArrayList<>();

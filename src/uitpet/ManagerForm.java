@@ -27,10 +27,13 @@ import DAOmodel.ServiceDetailDAO;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
@@ -569,6 +572,14 @@ public class ManagerForm extends javax.swing.JFrame {
         updatePetListTable();
     }
     
+    public static void getCustomerByPhone(String code) {
+        ArrayList<Customer> customerList = CustomerDAO.getCusByPhone(code);
+        for (Customer c : customerList) {
+            cusName.setText(c.getName());
+            return;
+        }
+    }
+    
     public ManagerForm() {
         initComponents();
         this.setIconImage(new ImageIcon("Images/pet-shop.PNG").getImage());
@@ -622,6 +633,15 @@ public class ManagerForm extends javax.swing.JFrame {
         updateProductStatisticListTable();
         updateServiceStatisticListTable();
         updatePetListTable();
+        Action action = new AbstractAction()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                getCustomerByPhone(cusPhone.getText());
+            }
+        };
+        cusPhone.addActionListener(action);
     } 
 
     /**
